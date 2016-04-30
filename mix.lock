@@ -1,0 +1,11 @@
+%{"certifi": {:hex, :certifi, "0.4.0"},
+  "exjsx": {:hex, :exjsx, "3.1.0"},
+  "hackney": {:hex, :hackney, "1.6.0"},
+  "httpoison": {:hex, :httpoison, "0.8.3"},
+  "idna": {:hex, :idna, "1.2.0"},
+  "jsx": {:hex, :jsx, "2.4.0"},
+  "metrics": {:hex, :metrics, "1.0.1"},
+  "mimerl": {:hex, :mimerl, "1.0.2"},
+  "slack": {:hex, :slack, "0.4.2"},
+  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.0"},
+  "websocket_client": {:git, "https://github.com/jeremyong/websocket_client", "f6892c8b55004008ce2d52be7d98b156f3e34569", []}}
