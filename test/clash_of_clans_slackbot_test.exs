@@ -2,7 +2,9 @@ defmodule ClashOfClansSlackbotTest do
   use ExUnit.Case
   doctest ClashOfClansSlackbot
 
-  test "the truth" do
-    assert 1 + 1 == 2
+  test "token not present" do
+    result = ClashOfClansSlackbot.authenticate(nil)
+    expected = { :err, "No token provided" }
+    assert result == expected
   end
 end

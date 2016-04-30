@@ -1,3 +1,12 @@
+defmodule Validator do
+  def validate_token(token) do
+    case !!token do
+      true -> { :ok, token }
+      _    -> { :err, "No token provided" }
+    end
+  end
+end
+
 defmodule ClashOfClansSlackbot do
   use Slack
 
@@ -17,7 +26,18 @@ defmodule ClashOfClansSlackbot do
     {:ok, state}
   end
 
+  def authenticate(token) do
+    case Validator.validate_token token do
+      { :err, err_msg } -> { :err, err_msg }
+      { :ok, _ } -> { :ok, token }
+    end
+  end
+
   def main(args) do
-    IO.puts "ABC"
+    token = Application.get_env :clash_of_clans_slackbot, :token
+    case authenticate token do
+      { :err, err_msg } -> IO.puts err_msg
+      _ -> IO.puts "Token authenticated"
+    end
   end
 end
