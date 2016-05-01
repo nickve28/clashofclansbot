@@ -7,7 +7,7 @@ defmodule Validator do
   end
 end
 
-defmodule ClashOfClansSlackbot do
+defmodule SlackClient do
   use Slack
 
   def handle_connect(slack, state) do
@@ -16,9 +16,6 @@ defmodule ClashOfClansSlackbot do
   end
 
   def handle_message(message = %{type: "message"}, slack, state) do
-    message_to_send = "Received #{length(state)} messages so far!"
-    send_message(message_to_send, message.channel, slack)
-
     {:ok, state ++ [message.text]}
   end
 
@@ -26,10 +23,18 @@ defmodule ClashOfClansSlackbot do
     {:ok, state}
   end
 
+  def start(token) do
+    start_link(token, [])
+  end
+end
+
+defmodule ClashOfClansSlackbot do
+  import SlackClient
+
   def authenticate(token) do
     case Validator.validate_token token do
       { :err, err_msg } -> { :err, err_msg }
-      { :ok, _ } -> { :ok, token }
+      { :ok, _ } -> SlackClient.start(token)
     end
   end
 
