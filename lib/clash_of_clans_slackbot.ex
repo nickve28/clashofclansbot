@@ -7,8 +7,15 @@ defmodule Validator do
   end
 end
 
-defmodule ClashOfClansSlackbot do
+defmodule MessageParser do
+  def parse_response(message) do
+    { :ok, message }
+  end
+end
+
+defmodule SlackClient do
   use Slack
+  import MessageParser
 
   def handle_connect(slack, state) do
     IO.puts "Connected as #{slack.me.name}"
@@ -16,7 +23,8 @@ defmodule ClashOfClansSlackbot do
   end
 
   def handle_message(message = %{type: "message"}, slack, state) do
-    message_to_send = "Received #{length(state)} messages so far!"
+    text = message.text
+    { :ok, message_to_send } = MessageParser.parse_response text
     send_message(message_to_send, message.channel, slack)
 
     {:ok, state ++ [message.text]}
@@ -26,10 +34,18 @@ defmodule ClashOfClansSlackbot do
     {:ok, state}
   end
 
+  def start(token) do
+    start_link(token, [])
+  end
+end
+
+defmodule ClashOfClansSlackbot do
+  import SlackClient
+
   def authenticate(token) do
     case Validator.validate_token token do
       { :err, err_msg } -> { :err, err_msg }
-      { :ok, _ } -> { :ok, token }
+      { :ok, _ } -> SlackClient.start(token)
     end
   end
 
