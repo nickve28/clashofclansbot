@@ -7,8 +7,15 @@ defmodule Validator do
   end
 end
 
+defmodule MessageParser do
+  def parse_response(message) do
+    { :ok, message }
+  end
+end
+
 defmodule SlackClient do
   use Slack
+  import MessageParser
 
   def handle_connect(slack, state) do
     IO.puts "Connected as #{slack.me.name}"
@@ -16,6 +23,10 @@ defmodule SlackClient do
   end
 
   def handle_message(message = %{type: "message"}, slack, state) do
+    text = message.text
+    { :ok, message_to_send } = MessageParser.parse_response text
+    send_message(message_to_send, message.channel, slack)
+
     {:ok, state ++ [message.text]}
   end
 
