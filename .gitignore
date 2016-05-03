@@ -5,3 +5,4 @@ erl_crash.dump
 /config
 *.ez
 clash_of_clans_slackbot
+*.beam
