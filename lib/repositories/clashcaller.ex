@@ -1,5 +1,5 @@
 defmodule Clashcaller.Request do
-  def construct(clan_name, enemy_clan_name, size) do
+  def construct(clan_name, enemy_clan_name, size) when is_integer(size) do
     [REQUEST: "CREATE_WAR", cname: clan_name, ename: enemy_clan_name, size: Integer.to_string(size),
      timers: "0", searchable: "false"]
   end

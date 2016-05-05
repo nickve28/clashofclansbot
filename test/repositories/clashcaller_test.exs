@@ -17,6 +17,11 @@ defmodule Clashcaller.RequestTest do
     assert Clashcaller.Request.construct(clan_name, enemy_name, size) === expected
   end
 
+  test "construct doesnt match a non integer size" do
+    {clan_name, enemy_name, size} = {"foo", "bar", "10"}
+    assert_raise FunctionClauseError, fn -> Clashcaller.Request.construct(clan_name, enemy_name, size) end
+  end
+
   test "transform to request params" do
     params = [REQUEST: "CREATE_WAR", cname: "foo", ename: "bar", size: "10", timers: "0", searchable: "false"]
     expected = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
@@ -26,7 +31,7 @@ defmodule Clashcaller.RequestTest do
   end
 
   test "start war" do
-    with_mock HTTPotion, [post: fn(url, headers) -> @mock_clashcaller end] do
+    with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller end] do
       params = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
                   "searchable=false"], "&"
       assert Clashcaller.start_war(params) === { :ok, @mock_clashcaller_baseurl <> @mock_clashcaller.body }
