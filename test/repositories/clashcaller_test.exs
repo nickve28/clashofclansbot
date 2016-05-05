@@ -13,7 +13,7 @@ defmodule Clashcaller.RequestTest do
 
   test "construct should make a named list" do
     {clan_name, enemy_name, size} = {"foo", "bar", 10}
-    expected = [REQUEST: "CREATE_WAR", cname: "foo", ename: "bar", size: "10", timers: "0", searchable: "false"]
+    expected = { :ok, [REQUEST: "CREATE_WAR", cname: "foo", ename: "bar", size: "10", timers: "0", searchable: "false"] }
     assert Clashcaller.Request.construct(clan_name, enemy_name, size) === expected
   end
 
