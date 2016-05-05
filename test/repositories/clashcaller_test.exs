@@ -3,7 +3,7 @@ defmodule Clashcaller.RequestTest do
   doctest Clashcaller.Request
 
   import Mock
-
+  #todo see if this can be moved to a stub file
   @mock_clashcaller  %HTTPotion.Response{body: "war/3tynq",
       headers: %HTTPotion.Headers{hdrs: [connection: "close", "content-length": "9",
         "content-type": "text/html", date: "Wed, 04 May 2016 19:10:57 GMT",
