@@ -22,6 +22,11 @@ defmodule Clashcaller.RequestTest do
     assert_raise FunctionClauseError, fn -> Clashcaller.Request.construct(clan_name, enemy_name, size) end
   end
 
+  test "construct fails if a wrong size is given" do
+    {clan_name, enemy_name, size} = {"foo", "bar", 5}
+    { :err, _ } = Clashcaller.Request.construct(clan_name, enemy_name, size)
+  end
+
   test "transform to request params" do
     params = [REQUEST: "CREATE_WAR", cname: "foo", ename: "bar", size: "10", timers: "0", searchable: "false"]
     expected = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",

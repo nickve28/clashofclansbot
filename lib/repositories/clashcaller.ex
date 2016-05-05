@@ -5,7 +5,7 @@ defmodule Clashcaller.Request do
     case (size in @war_sizes) do
       true ->  { :ok, [REQUEST: "CREATE_WAR", cname: clan_name, ename: enemy_clan_name, size: Integer.to_string(size),
                 timers: "0", searchable: "false"] }
-      _    ->  { :error, "#{size} is not valid, expected one of: #{Enum.join @war_sizes, ', '}" }
+      _    ->  { :err, "#{size} is not valid, expected one of: #{Enum.join @war_sizes, ", "}" }
     end
   end
 
