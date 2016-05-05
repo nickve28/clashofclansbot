@@ -9,6 +9,12 @@ defmodule Clashcaller.RequestTest do
         "content-type": "text/html", date: "Wed, 04 May 2016 19:10:57 GMT",
         server: "Apache/2.4.7 (Ubuntu)", "x-powered-by": "PHP/5.5.9-1ubuntu4.4"]},
       status_code: 200}
+  @mock_clashcaller_fail  %HTTPotion.Response{body: "Bad request",
+      headers: %HTTPotion.Headers{hdrs: [connection: "close", "content-length": "9",
+        "content-type": "text/html", date: "Wed, 04 May 2016 19:10:57 GMT",
+        server: "Apache/2.4.7 (Ubuntu)", "x-powered-by": "PHP/5.5.9-1ubuntu4.4"]},
+      status_code: 400}
+
   @mock_clashcaller_baseurl "http://clashcaller.com/"
 
   test "construct should make a named list" do
@@ -40,6 +46,14 @@ defmodule Clashcaller.RequestTest do
       params = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
                   "searchable=false"], "&"
       assert Clashcaller.start_war(params) === { :ok, @mock_clashcaller_baseurl <> @mock_clashcaller.body }
+    end
+  end
+
+  test "request fail clashcaller should return error" do
+    with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_fail end] do
+      params = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
+                  "searchable=false"], "&"
+      assert Clashcaller.start_war(params) === { :err, @mock_clashcaller_fail }
     end
   end
 end

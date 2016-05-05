@@ -23,7 +23,7 @@ defmodule Clashcaller do
                                                         body: request_form]
       case HTTPotion.Response.success? result do
         true  -> { :ok, base_url <> result.body }
-        false -> { :err, result.code }
+        false -> { :err, result }
       end
     end
   end
