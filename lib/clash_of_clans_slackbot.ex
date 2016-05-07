@@ -45,6 +45,10 @@ defmodule SlackClient do
     {:ok, state}
   end
 
+  def handle_message(message = %{hidden: true}, slack, state) do #This is to prevent the hidden url messages from crashing everything
+    { :ok, state ++ [message.message.text] }
+  end
+
   def handle_message(message = %{type: "message"}, slack, state) do
     text = message.text
     { status, response } = MessageParser.parse_response text
