@@ -9,8 +9,8 @@ end
 
 defmodule MessageParser do
   def parse_response(message) do
-    first_word = String.split(message, " ") |> Enum.at(0)
-    case first_word do
+    [ command | _ ] = String.split(message, " ")
+    case command do
       "!startwar" -> { :ok, message }
       _   -> { :no_content, nil }
     end
