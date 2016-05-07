@@ -8,9 +8,32 @@ defmodule Validator do
 end
 
 defmodule MessageParser do
+  @empty_values ["", ", ", " "]
+
   def parse_response(message) do
-    { :ok, message }
+    [command | parameters] = String.split message, " ", parts: 2
+    case command do
+      "!startwar" -> parse_war(parameters)
+      _   -> { :no_content, nil }
+    end
   end
+
+  defp parse_war(parameters) do
+    params = Enum.at parameters, 0 #Str split sends it as array
+    [size | names ] = String.split params, " ", parts: 2
+    parsed_size = String.to_integer size
+    parsed_names = Enum.at(names, 0)
+      |> String.split(~r/"/)
+      |> Enum.filter(&(!&1 in @empty_values))
+      |> Enum.map(&(String.strip &1))
+    name = Enum.at parsed_names, 0
+    ename = Enum.at parsed_names, 1
+    { :ok, req } = Clashcaller.Request.construct(name, ename, parsed_size)
+    Clashcaller.Request.to_form_body(req)
+      |> Clashcaller.start_war
+
+  end
+
 end
 
 defmodule SlackClient do
@@ -22,11 +45,16 @@ defmodule SlackClient do
     {:ok, state}
   end
 
+  def handle_message(message = %{hidden: true}, slack, state) do #This is to prevent the hidden url messages from crashing everything
+    { :ok, state ++ [message.message.text] }
+  end
+
   def handle_message(message = %{type: "message"}, slack, state) do
     text = message.text
-    { :ok, message_to_send } = MessageParser.parse_response text
-    send_message(message_to_send, message.channel, slack)
-
+    { status, response } = MessageParser.parse_response text
+    if status === :ok do
+      send_message(response, message.channel, slack)
+    end
     {:ok, state ++ [message.text]}
   end
 

@@ -30,6 +30,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
   defp deps do
     [{:slack, "~> 0.4.2"},
      {:websocket_client, git: "https://github.com/jeremyong/websocket_client"},
+     {:httpotion, "~> 2.2.0"},
      {:mock, "~> 0.1.1", only: :test}]
   end
 end
