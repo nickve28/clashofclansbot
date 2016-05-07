@@ -18,6 +18,7 @@ end
 defmodule Clashcaller do
   def start_war(request_form) do
     with base_url = "http://clashcaller.com/" do
+      HTTPotion.start #todo find workaround
       result = HTTPotion.post (base_url <> "api.php"), [headers: ["Accept": "application/x-www-form-urlencoded",
                                                          "Content-Type": "application/x-www-form-urlencoded"],
                                                         body: request_form]
