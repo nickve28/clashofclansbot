@@ -25,6 +25,6 @@ defmodule SlackClient do
   end
 
   def start(token) do
-    start_link(token, [])
+    SlackClient.start_link(token, [])
   end
 end

@@ -10,10 +10,4 @@ defmodule ClashOfClansSlackbotTest do
     assert result == expected
   end
 
-  test "authenticate succesfull" do
-    with_mock SlackClient, [start: fn(_token) -> {:ok, true} end] do
-      ClashOfClansSlackbot.authenticate("foo")
-      assert called SlackClient.start("foo")
-    end
-  end
 end

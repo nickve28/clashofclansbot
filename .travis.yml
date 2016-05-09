@@ -2,3 +2,5 @@ language: elixir
 elixir:
   - 1.2.2
   - 1.2.4
+script:
+  - mix test --no-start
