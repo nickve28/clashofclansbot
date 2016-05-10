@@ -1,5 +1,6 @@
 defmodule Storage do
   @db_name Application.get_env :clash_of_clans_slackbot, :database
+  @default_name "db.sqlite3" #in case nothing is present, travis will fail
 
   def save_url(url) do
     Sqlitex.with_db(@db_name, fn db ->
@@ -9,7 +10,7 @@ defmodule Storage do
   end
 
   def get_war_url() do
-    { :ok, result } = Sqlitex.with_db(@db_name, fn db ->
+    { :ok, result } = Sqlitex.with_db(@db_name || @default_name, fn db ->
       Sqlitex.query(db, "SELECT * FROM war_urls ORDER BY id DESC LIMIT 1;")
     end)
     result
