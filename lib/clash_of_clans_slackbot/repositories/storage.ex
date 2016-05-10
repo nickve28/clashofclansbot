@@ -8,6 +8,15 @@ defmodule Storage do
     end)
   end
 
+  def get_war_url() do
+    { :ok, result } = Sqlitex.with_db(@db_name, fn db ->
+      Sqlitex.query(db, "SELECT * FROM war_urls ORDER BY id DESC LIMIT 1;")
+    end)
+    result
+      |> Enum.map(&(&1[:url]))
+      |> Enum.at(0)
+  end
+
   defp init(db) do
     Sqlitex.query(db, "
       CREATE TABLE IF NOT EXISTS war_urls (

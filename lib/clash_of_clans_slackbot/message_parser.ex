@@ -23,6 +23,10 @@ defmodule MessageParser do
     { :ok, "I started the war, it can be found here: #{url}" }
   end
 
+  defp parse_action("!war", _parameters) do
+    "The current war url is #{Storage.get_war_url}"
+  end
+
   defp parse_action(_command, _) do
     { :no_content, _command }
   end
