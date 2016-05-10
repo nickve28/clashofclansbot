@@ -34,6 +34,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
     [{:slack, "~> 0.4.2"},
      {:websocket_client, git: "https://github.com/jeremyong/websocket_client"},
      {:httpotion, "~> 2.2.0"},
-     {:mock, "~> 0.1.1", only: :test}]
+     {:mock, "~> 0.1.1", only: :test},
+     {:sqlitex, "~> 1.0.0"}]
   end
 end

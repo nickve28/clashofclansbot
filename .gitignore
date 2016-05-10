@@ -6,3 +6,4 @@ erl_crash.dump
 *.ez
 /clash_of_clans_slackbot
 *.beam
+*.sqlite3
