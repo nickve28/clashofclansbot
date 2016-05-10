@@ -19,7 +19,7 @@ defmodule MessageParser do
     { :ok, url } = Clashcaller.Request.to_form_body(req)
                      |> Clashcaller.start_war
     #write to db
-    Task.async(fn -> Storage.save_url(url) end)
+    Storage.save_url(url)
     { :ok, "I started the war, it can be found here: #{url}" }
   end
 

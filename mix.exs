@@ -20,7 +20,6 @@ defmodule ClashOfClansSlackbot.Mixfile do
       applications: [:logger, :slack, :httpotion]
     ]
   end
-
   # Dependencies can be Hex packages:
   #
   #   {:mydep, "~> 0.3.0"}
