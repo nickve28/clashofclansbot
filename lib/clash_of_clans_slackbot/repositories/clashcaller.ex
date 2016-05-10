@@ -1,12 +1,13 @@
 defmodule Clashcaller.Request do
   @war_sizes [10, 15, 20, 25, 30, 40, 50]
 
-  def construct(clan_name, enemy_clan_name, size) when is_integer(size) do
-    case (size in @war_sizes) do
-      true ->  { :ok, [REQUEST: "CREATE_WAR", cname: clan_name, ename: enemy_clan_name, size: Integer.to_string(size),
-                timers: "0", searchable: "false"] }
-      _    ->  { :err, "#{size} is not valid, expected one of: #{Enum.join @war_sizes, ", "}" }
-    end
+  def construct(clan_name, enemy_clan_name, size) when size in @war_sizes do
+    { :ok, [REQUEST: "CREATE_WAR", cname: clan_name, ename: enemy_clan_name, size: Integer.to_string(size),
+            timers: "0", searchable: "false"] }
+  end
+
+  def construct(clan_name, enemy_clan, size) when is_integer(size) do
+    { :err, "#{size} is not valid, expected one of: #{Enum.join @war_sizes, ", "}" }
   end
 
   def to_form_body(request) do
