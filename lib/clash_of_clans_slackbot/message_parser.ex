@@ -16,8 +16,15 @@ defmodule MessageParser do
     name = Enum.at parsed_names, 0
     ename = Enum.at parsed_names, 1
     { :ok, req } = Clashcaller.Request.construct(name, ename, parsed_size)
-    Clashcaller.Request.to_form_body(req)
-      |> Clashcaller.start_war
+    { :ok, url } = Clashcaller.Request.to_form_body(req)
+                     |> Clashcaller.start_war
+    #write to db
+    Task.async(fn -> Storage.save_url(url) end)
+    { :ok, "I started the war, it can be found here: #{url}" }
+  end
+
+  defp parse_action("!war", _parameters) do
+    { :ok, "The current war url is #{Storage.get_war_url}" }
   end
 
   defp parse_action(_command, _) do
