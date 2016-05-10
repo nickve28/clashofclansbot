@@ -9,16 +9,17 @@ defmodule Storage do
   end
 
   defp init(db) do
-    Sqlitex.query(db, """
-      CREATE IF NOT EXISTS war_urls (
+    Sqlitex.query(db, "
+      CREATE TABLE IF NOT EXISTS war_urls (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
         url VARCHAR NOT NULL
       );
-    """)
+    ")
   end
 
   defp save(db, url) do
-    Sqlitex.query(db, """
-      INSERT INTO war_urls (url) VALUES (#{url});
-    """)
+    Sqlitex.query(db, "
+      INSERT INTO war_urls (url) VALUES ('#{url}');
+    ")
   end
 end
