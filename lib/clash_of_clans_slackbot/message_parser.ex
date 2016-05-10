@@ -24,7 +24,7 @@ defmodule MessageParser do
   end
 
   defp parse_action("!war", _parameters) do
-    "The current war url is #{Storage.get_war_url}"
+    { :ok, "The current war url is #{Storage.get_war_url}" }
   end
 
   defp parse_action(_command, _) do

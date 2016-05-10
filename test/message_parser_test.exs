@@ -34,6 +34,6 @@ defmodule MessageParserTest do
     test_db = Application.get_env :clash_of_clans_slackbot, :database
     Storage.save_url("foo")
     Storage.save_url(@mock_url)
-    assert MessageParser.parse_response("!war url") === "The current war url is #{@mock_url}"
+    assert MessageParser.parse_response("!war url") === { :ok, "The current war url is #{@mock_url}" }
   end
 end
