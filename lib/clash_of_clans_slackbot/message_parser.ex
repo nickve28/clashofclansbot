@@ -2,8 +2,14 @@ defmodule MessageParser do
   @empty_values ["", ", ", " "]
 
   def parse_response(message) do
-    [command, parameters] = String.split message, " ", parts: 2
-    parse_action command, parameters
+    command = String.split message, " ", parts: 2
+    parameters = ""
+    if Enum.count(command) > 1 do
+      [ command, parameters ] = command #todo refactor
+      parse_action command, parameters
+    else
+      parse_action Enum.at(command, 0), []
+    end
   end
 
   defp parse_action(_command="!startwar", parameters) do
@@ -22,6 +28,34 @@ defmodule MessageParser do
     Storage.save_url(url)
 
     { :ok, "I started the war, it can be found here: #{url}" }
+  end
+
+  defp parse_action("!reservations", []) do
+    { :no_content, "!reservations" }
+  end
+
+  defp parse_action("!reservations", parameters) do
+    { target, _ } = Integer.parse(parameters)
+    { :ok, request } = Storage.get_war_url
+      |> String.split("/")
+      |> List.last
+      |> Clashcaller.Request.construct
+    { :ok, reservations } = Clashcaller.Request.to_form_body(request)
+                              |> Clashcaller.overview
+    result = reservations
+      |> Enum.filter(&(&1.target === target))
+      |> to_output(target)
+    { :ok, result }
+  end
+
+  defp to_output([], target) do
+    "No reservations known for #{target}"
+  end
+
+  defp to_output(reservations, target) do
+    reservations
+      |> Enum.map(fn entry -> "Reservation for #{entry.player} with #{entry.stars}" end)
+      |> Enum.join("\n")
   end
 
   defp parse_action("!war", _parameters) do
