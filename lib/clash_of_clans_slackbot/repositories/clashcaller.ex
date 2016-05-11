@@ -16,6 +16,10 @@ defmodule Clashcaller.Request do
     { :ok, [REQUEST: "APPEND_CALL", warcode: war, posy: posy, value: name] }
   end
 
+  def construct(warcode) do
+    { :ok, [REQUEST: "GET_FULL_UPDATE", warcode: warcode] }
+  end
+
   def to_form_body(request) do
     form_req = for {k, v} <- request, into: [], do: (Atom.to_string(k) <> "=" <> v)
     Enum.join(form_req, "&")
@@ -38,6 +42,15 @@ defmodule Clashcaller do
   end
 
   def reserve_attack(request_form) do
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, result.body }
+      false -> { :err, result }
+    end
+  end
+
+  def overview(request_form) do
     result = HTTPotion.post @api, [headers: @form_headers,
                                    body: request_form]
     case HTTPotion.Response.success? result do
