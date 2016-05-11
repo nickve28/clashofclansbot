@@ -26,6 +26,44 @@ defmodule Clashcaller.Request do
   end
 end
 
+defmodule Clashcaller.ClashcallerEntry do
+  @derive [Poison.Encoder]
+  defstruct [:player, :stars, :target]
+
+  def to_clashcaller_entry(clashcaller_output_json) do
+    { parsed_posy, _ } = Integer.parse clashcaller_output_json["posy"]
+    target = parsed_posy + 1 #clashcaller mapping
+
+    { stars, _ } = Integer.parse clashcaller_output_json["stars"]
+    mapped_stars = convert(stars)
+    %Clashcaller.ClashcallerEntry{
+      player: clashcaller_output_json["playername"],
+      stars: mapped_stars,
+      target: target
+    }
+  end
+
+  def convert(1) do
+    "No attack"
+  end
+
+  def convert(2) do
+    "0 stars"
+  end
+
+  def convert(3) do
+    "1 star"
+  end
+
+  def convert(4) do
+    "2 stars"
+  end
+
+  def convert(5) do
+    "3 stars"
+  end
+end
+
 defmodule Clashcaller do
   @base_url "http://clashcaller.com/"
   @api @base_url <> "api.php"
