@@ -4,6 +4,7 @@ defmodule MessageParserTest do
   doctest MessageParser
 
   @mock_url "http://clashcaller.com/war/1234"
+  @mock_reservation %Clashcaller.ClashcallerEntry{player: "Nick", stars: "No attack", target: 3}
 
   test "parse_response should respond with no content if the message does not start with a valid command" do
     result = MessageParser.parse_response "start 10 man war"
@@ -47,6 +48,20 @@ defmodule MessageParserTest do
     end] do
       input = "!reserve 1 Nick"
       assert (MessageParser.parse_response input) === { :ok, "<success>" }
+    end
+  end
+
+  test "!reservations <empty> should not work" do
+    { :no_content, _ } = MessageParser.parse_response("!reservations")
+  end
+
+  test "!reservations <target> should return reservations" do
+    Storage.save_url @mock_url
+    with_mock Clashcaller, [overview: fn (req) ->
+      assert String.match?(req, ~r/warcode=1234/)
+      { :ok, [@mock_reservation] }
+    end] do
+      assert MessageParser.parse_response("!reservations 3") === { :ok, "Reservation for Nick with No attack" }
     end
   end
 end

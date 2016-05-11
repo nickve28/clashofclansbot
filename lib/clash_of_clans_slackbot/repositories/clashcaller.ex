@@ -16,9 +16,51 @@ defmodule Clashcaller.Request do
     { :ok, [REQUEST: "APPEND_CALL", warcode: war, posy: posy, value: name] }
   end
 
+  def construct(warcode) do
+    { :ok, [REQUEST: "GET_FULL_UPDATE", warcode: warcode] }
+  end
+
   def to_form_body(request) do
     form_req = for {k, v} <- request, into: [], do: (Atom.to_string(k) <> "=" <> v)
     Enum.join(form_req, "&")
+  end
+end
+
+defmodule Clashcaller.ClashcallerEntry do
+  @derive [Poison.Encoder]
+  defstruct [:player, :stars, :target]
+
+  def to_clashcaller_entry(clashcaller_output_json) do
+    { parsed_posy, _ } = Integer.parse clashcaller_output_json["posy"]
+    target = parsed_posy + 1 #clashcaller mapping
+
+    { stars, _ } = Integer.parse clashcaller_output_json["stars"]
+    mapped_stars = convert(stars)
+    %Clashcaller.ClashcallerEntry{
+      player: clashcaller_output_json["playername"],
+      stars: mapped_stars,
+      target: target
+    }
+  end
+
+  def convert(1) do
+    "No attack"
+  end
+
+  def convert(2) do
+    "0 stars"
+  end
+
+  def convert(3) do
+    "1 star"
+  end
+
+  def convert(4) do
+    "2 stars"
+  end
+
+  def convert(5) do
+    "3 stars"
   end
 end
 
@@ -44,5 +86,20 @@ defmodule Clashcaller do
       true  -> { :ok, result.body }
       false -> { :err, result }
     end
+  end
+
+  def overview(request_form) do
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, convert_to_overview(result.body) }
+      false -> { :err, result }
+    end
+  end
+
+  defp convert_to_overview(body) do
+    Poison.Parser.parse!(body)
+      |> Map.get("calls")
+      |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
   end
 end
