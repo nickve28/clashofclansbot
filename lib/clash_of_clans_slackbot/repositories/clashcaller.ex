@@ -6,8 +6,14 @@ defmodule Clashcaller.Request do
             timers: "0", searchable: "false"] }
   end
 
+  #todo separate request modules since this gets bloated
   def construct(clan_name, enemy_clan, size) when is_integer(size) do
     { :err, "#{size} is not valid, expected one of: #{Enum.join @war_sizes, ", "}" }
+  end
+
+  def construct(target, name, war) when is_integer(target) do
+    posy = Integer.to_string(target - 1) #clashcaller deals with ypositions
+    { :ok, [REQUEST: "APPEND_CALL", warcode: war, posy: posy, value: name] }
   end
 
   def to_form_body(request) do
@@ -17,16 +23,26 @@ defmodule Clashcaller.Request do
 end
 
 defmodule Clashcaller do
+  @base_url "http://clashcaller.com/"
+  @api @base_url <> "api.php"
+  @form_headers ["Accept": "application/x-www-form-urlencoded",
+                 "Content-Type": "application/x-www-form-urlencoded"]
+
   def start_war(request_form) do
-    with base_url = "http://clashcaller.com/" do
-      HTTPotion.start #todo find workaround
-      result = HTTPotion.post (base_url <> "api.php"), [headers: ["Accept": "application/x-www-form-urlencoded",
-                                                         "Content-Type": "application/x-www-form-urlencoded"],
-                                                        body: request_form]
-      case HTTPotion.Response.success? result do
-        true  -> { :ok, base_url <> result.body }
-        false -> { :err, result }
-      end
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, @base_url <> result.body }
+      false -> { :err, result }
+    end
+  end
+
+  def reserve_attack(request_form) do
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, result.body }
+      false -> { :err, result }
     end
   end
 end

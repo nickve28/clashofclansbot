@@ -36,4 +36,17 @@ defmodule MessageParserTest do
     Storage.save_url(@mock_url)
     assert MessageParser.parse_response("!war url") === { :ok, "The current war url is #{@mock_url}" }
   end
+
+  test "!reserve <target> <name> <warurl> should send correct data" do
+    Storage.save_url @mock_url
+    with_mock Clashcaller, [reserve_attack: fn (req) ->
+      assert String.match?(req, ~r/warcode=1234/)
+      assert String.match?(req, ~r/posy=0/)
+      assert String.match?(req, ~r/value=Nick/)
+      { :ok, "<success>" }
+    end] do
+      input = "!reserve 1 Nick"
+      assert (MessageParser.parse_response input) === { :ok, "<success>" }
+    end
+  end
 end
