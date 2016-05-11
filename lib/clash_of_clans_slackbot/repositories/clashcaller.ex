@@ -17,15 +17,17 @@ defmodule Clashcaller.Request do
 end
 
 defmodule Clashcaller do
+  @base_url "http://clashcaller.com/"
+  @api @base_url <> "api.php"
+  @form_headers ["Accept": "application/x-www-form-urlencoded",
+                 "Content-Type": "application/x-www-form-urlencoded"]
+
   def start_war(request_form) do
-    with base_url = "http://clashcaller.com/" do
-      result = HTTPotion.post (base_url <> "api.php"), [headers: ["Accept": "application/x-www-form-urlencoded",
-                                                         "Content-Type": "application/x-www-form-urlencoded"],
-                                                        body: request_form]
-      case HTTPotion.Response.success? result do
-        true  -> { :ok, base_url <> result.body }
-        false -> { :err, result }
-      end
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, @base_url <> result.body }
+      false -> { :err, result }
     end
   end
 end
