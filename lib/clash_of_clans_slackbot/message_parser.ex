@@ -28,6 +28,17 @@ defmodule MessageParser do
     { :ok, "The current war url is #{Storage.get_war_url}" }
   end
 
+  defp parse_action("!reserve", parameters) do
+    [target, name] = String.split parameters, " ", parts: 2
+    {target, _} = Integer.parse target
+    warcode = Storage.get_war_url
+      |> String.split("/")
+      |> List.last
+    { :ok, req } = Clashcaller.Request.construct(target, name, warcode)
+    Clashcaller.Request.to_form_body(req)
+      |> Clashcaller.reserve_attack
+  end
+
   defp parse_action(_command, _) do
     { :no_content, _command }
   end
