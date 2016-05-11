@@ -92,8 +92,14 @@ defmodule Clashcaller do
     result = HTTPotion.post @api, [headers: @form_headers,
                                    body: request_form]
     case HTTPotion.Response.success? result do
-      true  -> { :ok, result.body }
+      true  -> { :ok, convert_to_overview(result.body) }
       false -> { :err, result }
     end
+  end
+
+  defp convert_to_overview(body) do
+    Poison.Parser.parse!(body)
+      |> Map.get("calls")
+      |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
   end
 end
