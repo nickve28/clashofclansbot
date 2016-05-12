@@ -3,16 +3,18 @@ defmodule MessageParser do
 
   def parse_response(message) do
     command = String.split message, " ", parts: 2
-    parameters = ""
-    if Enum.count(command) > 1 do
-      [ command, parameters ] = command #todo refactor
-      parse_action command, parameters
-    else
-      parse_action Enum.at(command, 0), []
-    end
+    parse_args(command)
   end
 
-  defp parse_action(_command="!startwar", parameters) do
+  defp parse_args([command, parameters]) do
+    parse_action command, parameters
+  end
+
+  defp parse_args([command]) do
+    parse_action command, []
+  end
+
+  defp parse_action("!startwar", parameters) do
     [size | names ] = String.split parameters, " ", parts: 2
     parsed_size = String.to_integer size
     parsed_names = Enum.at(names, 0)
