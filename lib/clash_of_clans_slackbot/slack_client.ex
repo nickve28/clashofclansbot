@@ -23,8 +23,4 @@ defmodule SlackClient do
   def handle_message(_message, _slack, state) do
     {:ok, state}
   end
-
-  def start(token) do
-    SlackClient.start_link(token, [])
-  end
 end
