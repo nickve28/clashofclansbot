@@ -88,11 +88,9 @@ defmodule MessageParser do
     { :ok, reservations } = request
                               |> Clashcaller.Request.to_form_body
                               |> Clashcaller.overview
-    IO.inspect reservations
     attack_position = reservations
                         |> Enum.filter(&(&1.target === target))
                         |> find_attack_position(player)
-    IO.puts attack_position
     { :ok, attack_request } = Clashcaller.Request.construct(warcode, target, attack_position, stars)
     attack_request
       |> Clashcaller.Request.to_form_body

@@ -34,11 +34,11 @@ defmodule Clashcaller.RequestTest do
    vary: "Accept-Encoding", "x-powered-by": "PHP/5.5.9-1ubuntu4.4"]},
  status_code: 200}
 
-  @mock_clashcaller_reservations_parsed [%Clashcaller.ClashcallerEntry{player: "Zoy", stars: "No attack", target: 1}, %Clashcaller.ClashcallerEntry{player: "Austin", stars: "3 stars", target: 4},
-             %Clashcaller.ClashcallerEntry{player: "Nick", stars: "3 stars", target: 5}, %Clashcaller.ClashcallerEntry{player: "Zoy", stars: "No attack", target: 2},
-             %Clashcaller.ClashcallerEntry{player: "Drew", stars: "3 stars", target: 6}, %Clashcaller.ClashcallerEntry{player: "GRIZ", stars: "No attack", target: 3},
-             %Clashcaller.ClashcallerEntry{player: "Krill", stars: "2 stars", target: 7}, %Clashcaller.ClashcallerEntry{player: "Juke", stars: "2 stars", target: 3},
-             %Clashcaller.ClashcallerEntry{player: "Drew", stars: "3 stars", target: 7}, %Clashcaller.ClashcallerEntry{player: "Nick", stars: "3 stars", target: 8}]
+  @mock_clashcaller_reservations_parsed [%Clashcaller.ClashcallerEntry{player: "Zoy", stars: "No attack", target: 1, position: 1}, %Clashcaller.ClashcallerEntry{player: "Austin", stars: "3 stars", target: 4, position: 1},
+             %Clashcaller.ClashcallerEntry{player: "Nick", stars: "3 stars", target: 5, position: 1}, %Clashcaller.ClashcallerEntry{player: "Zoy", stars: "No attack", target: 2, position: 1},
+             %Clashcaller.ClashcallerEntry{player: "Drew", stars: "3 stars", target: 6, position: 1}, %Clashcaller.ClashcallerEntry{player: "GRIZ", stars: "No attack", target: 3, position: 1},
+             %Clashcaller.ClashcallerEntry{player: "Krill", stars: "2 stars", target: 7, position: 1}, %Clashcaller.ClashcallerEntry{player: "Juke", stars: "2 stars", target: 3, position: 2},
+             %Clashcaller.ClashcallerEntry{player: "Drew", stars: "3 stars", target: 7, position: 2}, %Clashcaller.ClashcallerEntry{player: "Nick", stars: "3 stars", target: 8, position: 1}]
 
   @mock_clashcaller_baseurl "http://clashcaller.com/"
 

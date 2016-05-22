@@ -7,7 +7,7 @@ defmodule Clashcaller.ClashcallerEntryTest do
    "updatetime" => "2016-05-11 09:49:48"}
 
  test "map to Clashcaller Entry" do
-   assert Clashcaller.ClashcallerEntry.to_clashcaller_entry(@example) === %Clashcaller.ClashcallerEntry{ player: "Nick", target: 8, stars: "3 stars"}
+   assert Clashcaller.ClashcallerEntry.to_clashcaller_entry(@example) === %Clashcaller.ClashcallerEntry{ player: "Nick", target: 8, stars: "3 stars", "position": 1}
  end
 
 end

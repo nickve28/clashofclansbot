@@ -78,7 +78,7 @@ end
 
 defmodule Clashcaller.ClashcallerEntry do
   @derive [Poison.Encoder]
-  defstruct [:player, :stars, :target]
+  defstruct player: nil, stars: nil, target: nil, position: nil
 
   def to_clashcaller_entry(clashcaller_output_json) do
     { parsed_posy, _ } = Integer.parse clashcaller_output_json["posy"]
@@ -86,10 +86,15 @@ defmodule Clashcaller.ClashcallerEntry do
 
     { stars, _ } = Integer.parse clashcaller_output_json["stars"]
     mapped_stars = convert(stars)
+
+    { position, _ } = Integer.parse clashcaller_output_json["posx"]
+    position = position + 1
+
     %Clashcaller.ClashcallerEntry{
       player: clashcaller_output_json["playername"],
       stars: mapped_stars,
-      target: target
+      target: target,
+      position: position
     }
   end
 
