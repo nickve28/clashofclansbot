@@ -77,7 +77,9 @@ defmodule MessageParser do
 
   defp parse_action("!attack", parameters) do
     [target, player, stars] = String.split(parameters, " ")
-    register_attack(Integer.parse(target), player, Integer.parse(stars))
+    {target, _} = Integer.parse target
+    {stars, _} = Integer.parse stars
+    register_attack(target, player, stars)
   end
 
   defp register_attack(target, player, stars) do
@@ -88,9 +90,11 @@ defmodule MessageParser do
     { :ok, reservations } = request
                               |> Clashcaller.Request.to_form_body
                               |> Clashcaller.overview
-    attack_position = reservations
-                        |> Enum.filter(&(&1.target === target))
-                        |> find_attack_position(player)
+    attacker = reservations
+                 |> Enum.filter(&(&1.target === target))
+                 |> find_attack_position(player)
+    attack_position = attacker.position
+
     { :ok, attack_request } = Clashcaller.Request.construct(warcode, target, attack_position, stars)
     attack_request
       |> Clashcaller.Request.to_form_body
@@ -99,7 +103,7 @@ defmodule MessageParser do
 
   defp find_attack_position(reservations, player) do
     reservations
-      |> Enum.map(fn reservation -> reservation.value === player end)
+      |> Enum.filter(fn reservation -> reservation.player === player end)
       |> Enum.at(0)
   end
 

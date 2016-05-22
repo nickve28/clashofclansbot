@@ -5,7 +5,7 @@ defmodule Clashcaller.Request do
   Constructs a UPDATE_STARS request
 
   ## Examples
-      iex> Clashcaller.Request.construct("1234", 1, 0, 2)
+      iex> Clashcaller.Request.construct("1234", 1, 1, 2)
       { :ok, [REQUEST: "UPDATE_STARS", warcode: "1234", posy: "0", posx: "0", value: "4"] }
   """
   def construct(warcode, target, position, stars) do
@@ -13,7 +13,7 @@ defmodule Clashcaller.Request do
       |> Integer.to_string
     clashcaller_target = (target - 1)
       |> Integer.to_string
-    clashcaller_position = Integer.to_string(position)
+    clashcaller_position = Integer.to_string(position - 1)
     { :ok, [REQUEST: "UPDATE_STARS", warcode: warcode, posy: clashcaller_target, posx: clashcaller_position, value: clashcaller_stars] }
   end
 
