@@ -43,6 +43,8 @@ defmodule Clashcaller.Request do
   @doc """
   Constructs a request to reserve a target
 
+  ## Examples
+      iex> Clashcaller.Request.construct(1, "Nick", "1234")
       { :ok, [REQUEST: "APPEND_CALL", warcode: "1234", posy: "0", value: "Nick"] }
   """
   def construct(target, name, war) when is_integer(target) do
