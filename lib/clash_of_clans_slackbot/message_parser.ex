@@ -109,8 +109,7 @@ defmodule MessageParser do
 
   defp find_attack_position(reservations, player) do
     reservations
-      |> Enum.filter(fn reservation -> reservation.player === player end)
-      |> Enum.at(0)
+      |> Enum.find(fn reservation -> reservation.player === player end)
   end
 
   defp parse_action(_command, _) do
