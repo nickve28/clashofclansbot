@@ -75,6 +75,44 @@ defmodule MessageParser do
       |> Clashcaller.reserve_attack
   end
 
+  defp parse_action("!attack", parameters) do
+    [target, player, stars] = String.split(parameters, " ")
+    {target, _} = Integer.parse target
+    {stars, _} = Integer.parse stars
+    register_attack(target, player, stars)
+  end
+
+  defp register_attack(target, player, stars) do
+    warcode = Storage.get_war_url
+      |> String.split("/")
+      |> List.last
+    { :ok, request } = Clashcaller.Request.construct(warcode)
+    { :ok, reservations } = request
+                              |> Clashcaller.Request.to_form_body
+                              |> Clashcaller.overview
+    attacker = reservations
+                 |> Enum.filter(&(&1.target === target))
+                 |> find_attack_position(player)
+    handle_attack_registration(attacker, warcode, target, stars)
+  end
+
+  defp handle_attack_registration(nil, _, _, _) do
+    { :ok, "No reservation found for that player" }
+  end
+
+  defp handle_attack_registration(%{position: attack_position}, warcode, target, stars) do
+    { :ok, attack_request } = Clashcaller.Request.construct(warcode, target, attack_position, stars)
+    attack_request
+      |> Clashcaller.Request.to_form_body
+      |> Clashcaller.register_attack
+  end
+
+  defp find_attack_position(reservations, player) do
+    reservations
+      |> Enum.filter(fn reservation -> reservation.player === player end)
+      |> Enum.at(0)
+  end
+
   defp parse_action(_command, _) do
     { :no_content, _command }
   end

@@ -2,6 +2,22 @@ defmodule Clashcaller.Request do
   @war_sizes [10, 15, 20, 25, 30, 40, 50]
 
   @doc """
+  Constructs a UPDATE_STARS request
+
+  ## Examples
+      iex> Clashcaller.Request.construct("1234", 1, 1, 2)
+      { :ok, [REQUEST: "UPDATE_STARS", warcode: "1234", posy: "0", posx: "0", value: "4"] }
+  """
+  def construct(warcode, target, position, stars) do
+    clashcaller_stars = (stars + 2)
+      |> Integer.to_string
+    clashcaller_target = (target - 1)
+      |> Integer.to_string
+    clashcaller_position = Integer.to_string(position - 1)
+    { :ok, [REQUEST: "UPDATE_STARS", warcode: warcode, posy: clashcaller_target, posx: clashcaller_position, value: clashcaller_stars] }
+  end
+
+  @doc """
   Constructs a CREATE_WAR request for clashcaller, returned as list
 
   ## Examples
@@ -62,7 +78,7 @@ end
 
 defmodule Clashcaller.ClashcallerEntry do
   @derive [Poison.Encoder]
-  defstruct [:player, :stars, :target]
+  defstruct player: nil, stars: nil, target: nil, position: nil
 
   def to_clashcaller_entry(clashcaller_output_json) do
     { parsed_posy, _ } = Integer.parse clashcaller_output_json["posy"]
@@ -70,10 +86,15 @@ defmodule Clashcaller.ClashcallerEntry do
 
     { stars, _ } = Integer.parse clashcaller_output_json["stars"]
     mapped_stars = convert(stars)
+
+    { position, _ } = Integer.parse clashcaller_output_json["posx"]
+    position = position + 1
+
     %Clashcaller.ClashcallerEntry{
       player: clashcaller_output_json["playername"],
       stars: mapped_stars,
-      target: target
+      target: target,
+      position: position
     }
   end
 
@@ -135,5 +156,14 @@ defmodule Clashcaller do
     Poison.Parser.parse!(body)
       |> Map.get("calls")
       |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
+  end
+
+  def register_attack(request_form) do
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, result.body }
+      false -> { :err, result }
+    end
   end
 end
