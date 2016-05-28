@@ -93,8 +93,14 @@ defmodule MessageParser do
     attacker = reservations
                  |> Enum.filter(&(&1.target === target))
                  |> find_attack_position(player)
-    attack_position = attacker.position
+    handle_attack_registration(attacker, warcode, target, stars)
+  end
 
+  defp handle_attack_registration(nil, _, _, _) do
+    { :ok, "No reservation found for that player" }
+  end
+
+  defp handle_attack_registration(%{position: attack_position}, warcode, target, stars) do
     { :ok, attack_request } = Clashcaller.Request.construct(warcode, target, attack_position, stars)
     attack_request
       |> Clashcaller.Request.to_form_body
