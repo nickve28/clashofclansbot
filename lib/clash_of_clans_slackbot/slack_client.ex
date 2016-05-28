@@ -1,13 +1,12 @@
 defmodule SlackClient do
   use Slack
-  import MessageParser
 
   def handle_connect(slack, state) do
     IO.puts "Connected as #{slack.me.name}"
     {:ok, state}
   end
 
-  def handle_message(message = %{hidden: true}, slack, state) do #This is to prevent the hidden url messages from crashing everything
+  def handle_message(message = %{hidden: true}, _slack, state) do #This is to prevent the hidden url messages from crashing everything
     { :ok, state ++ [message.message.text] }
   end
 

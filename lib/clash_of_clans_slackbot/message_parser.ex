@@ -50,16 +50,6 @@ defmodule MessageParser do
     { :ok, result }
   end
 
-  defp to_output([], target) do
-    "No reservations known for #{target}"
-  end
-
-  defp to_output(reservations, target) do
-    reservations
-      |> Enum.map(fn entry -> "Reservation for #{entry.player} with #{entry.stars}" end)
-      |> Enum.join("\n")
-  end
-
   defp parse_action("!war", _parameters) do
     { :ok, "The current war url is #{Storage.get_war_url}" }
   end
@@ -80,6 +70,20 @@ defmodule MessageParser do
     {target, _} = Integer.parse target
     {stars, _} = Integer.parse stars
     register_attack(target, player, stars)
+  end
+
+  defp parse_action(command, _) do
+    { :no_content, command }
+  end
+
+  defp to_output([], target) do
+    "No reservations known for #{target}"
+  end
+
+  defp to_output(reservations, _target) do
+    reservations
+      |> Enum.map(fn entry -> "Reservation for #{entry.player} with #{entry.stars}" end)
+      |> Enum.join("\n")
   end
 
   defp register_attack(target, player, stars) do
@@ -112,11 +116,6 @@ defmodule MessageParser do
       |> Enum.filter(fn reservation -> reservation.player === player end)
       |> Enum.at(0)
   end
-
-  defp parse_action(_command, _) do
-    { :no_content, _command }
-  end
-
 end
 
 
