@@ -86,7 +86,9 @@ defmodule Clashcaller.ClashcallerEntry do
     5 => "3 stars"
   }
 
-  for {k, v} <- @star_mapping, do: def convert(unquote(k)), do: unquote(v)
+  for {k, v} <- @star_mapping do
+    def convert(unquote(k)), do: unquote(v)
+  end
 
   def to_clashcaller_entry(clashcaller_output_json) do
     { parsed_posy, _ } = Integer.parse clashcaller_output_json["posy"]
