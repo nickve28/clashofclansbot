@@ -80,6 +80,18 @@ defmodule Clashcaller.ClashcallerEntry do
   @derive [Poison.Encoder]
   defstruct player: nil, stars: nil, target: nil, position: nil
 
+  @star_mapping %{
+    1 => "No attack",
+    2 => "0 stars",
+    3 => "1 star",
+    4 => "2 stars",
+    5 => "3 stars"
+  }
+
+  for {k, v} <- @star_mapping do
+    def convert(unquote(k)), do: unquote(v)
+  end
+
   def to_clashcaller_entry(clashcaller_output_json) do
     { parsed_posy, _ } = Integer.parse clashcaller_output_json["posy"]
     target = parsed_posy + 1 #clashcaller mapping
@@ -96,26 +108,6 @@ defmodule Clashcaller.ClashcallerEntry do
       target: target,
       position: position
     }
-  end
-
-  def convert(1) do
-    "No attack"
-  end
-
-  def convert(2) do
-    "0 stars"
-  end
-
-  def convert(3) do
-    "1 star"
-  end
-
-  def convert(4) do
-    "2 stars"
-  end
-
-  def convert(5) do
-    "3 stars"
   end
 end
 
