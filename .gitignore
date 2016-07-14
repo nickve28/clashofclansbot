@@ -7,3 +7,5 @@ erl_crash.dump
 /clash_of_clans_slackbot
 *.beam
 *.sqlite3
+.deliver
+/rel
