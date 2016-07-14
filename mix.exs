@@ -17,7 +17,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
   def application do
     [
       mod: {ClashOfClansSlackbot, []},
-      applications: [:logger, :slack, :httpotion]
+      applications: [:logger, :slack, :httpotion, :poison, :websocket_client, :sqlitex, :edeliver, :exrm]
     ]
   end
 
@@ -36,6 +36,8 @@ defmodule ClashOfClansSlackbot.Mixfile do
      {:httpotion, "~> 2.2.0"},
      {:mock, "~> 0.1.1", only: :test},
      {:sqlitex, "~> 1.0.0"},
-     {:poison, "~> 2.0"}]
+     {:poison, "~> 2.0"},
+     {:exrm, "~> 1.0.3"},
+     {:edeliver, ">= 1.2.10"}]
   end
 end
