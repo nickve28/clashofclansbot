@@ -10,7 +10,7 @@ defmodule ClashOfClansSlackbot.Repositories.ClashApi do
   def members_endpoint(clantag) do
     clantag
       |> encode_tag
-      |> (fn tag -> @base_url <> "clans/" <> tag <> "/members" end).()
+      |> (fn tag -> "#{@base_url}clans/#{tag}/members" end).()
   end
 
   def get_members(url, token) do
