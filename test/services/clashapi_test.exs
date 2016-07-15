@@ -15,7 +15,7 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
       status_code: 200}}
   end
 
-  test "putting data in the agent should save the players", shared do
+  test "putting data in the agent should save the players which can be returned by listing", shared do
     expected = [
       %ClashOfClansSlackbot.Models.Player{name: "Zoyvod", donations: 40, donations_received: 120},
       %ClashOfClansSlackbot.Models.Player{name: "[C]rAnCkEt~", donations: 0, donations_received: 0},
@@ -26,6 +26,18 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
       ClashOfClansSlackbot.Services.ClashApi.start_link("#C8000C0", "sometoken")
       ClashOfClansSlackbot.Services.ClashApi.poll
       assert ClashOfClansSlackbot.Services.ClashApi.list() === expected
+    end
+  end
+
+  test "list_bad_donators should return all bad donators", shared do
+    expected= [
+      %ClashOfClansSlackbot.Models.Player{name: "[C]rAnCkEt~", donations: 0, donations_received: 0}
+    ]
+
+    with_mock HTTPotion, [get: fn(_url, _headers) -> shared[:players] end] do
+      ClashOfClansSlackbot.Services.ClashApi.start_link("#C8000C0", "sometoken")
+      ClashOfClansSlackbot.Services.ClashApi.poll
+      assert ClashOfClansSlackbot.Services.ClashApi.list_bad_donators === expected
     end
   end
 end
