@@ -13,7 +13,8 @@ defmodule ClashOfClansSlackbot do
     case authenticate token do
       { :err, err_msg } -> IO.puts err_msg
       _ -> children = [
-          worker(SlackClient, [token, []])
+          worker(SlackClient, [token, []]),
+          worker(ClashOfClansSlackbot.Services.ClashApi, ["#C8000C0", Application.get_env(:clash_of_clans_slackbot, :clashapi_token)])
         ]
         Supervisor.start_link(children, strategy: :one_for_one)
     end
