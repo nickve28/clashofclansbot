@@ -31,7 +31,7 @@ config :clash_of_clans_slackbot, post_channel: "clashofclans"
 
 config :quantum, cron: [
  "0 */12 * * *":      {Tasks.FindBadDonators, :run},
- "0 */1 * * *":       {Tasks.PollClashApi, :run}
+ "45 * * * *":       {Tasks.PollClashApi, :run}
 ]
 
 import_config "#{Mix.env}.exs"
