@@ -4,7 +4,7 @@ defmodule Tasks.FindBadDonators do
   end
 
   def run() do
-    channel_name = Application.get_env :clash_of_clans_slackbot, :post_channel
+    channel_name = Application.get_env(:clash_of_clans_slackbot, :post_channel) || "bottesting"
     token = Application.get_env :clash_of_clans_slackbot, :token
     channel_id = Task.async(fn -> Slack.Web.Channels.list(%{token: token})
                 |> Map.get("channels")
