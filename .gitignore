@@ -2,9 +2,8 @@
 /cover
 /deps
 erl_crash.dump
-/config/dev.exs
-/config/test.exs
 *.ez
+/config/dev.exs
 /clash_of_clans_slackbot
 *.beam
 *.sqlite3
