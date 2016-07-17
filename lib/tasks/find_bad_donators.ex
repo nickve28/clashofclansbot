@@ -1,6 +1,6 @@
 defmodule Tasks.FindBadDonators do
   defp post_message(message, channel_id, token) do
-    Slack.Web.Chat.post_message(channel_id, message, %{token: token})
+    Slack.Web.Chat.post_message(channel_id, message, %{token: token, as_user: true})
   end
 
   def run() do
@@ -11,8 +11,9 @@ defmodule Tasks.FindBadDonators do
                 |> Enum.find(fn x -> x["name"] == channel_name end)
                 |> Map.get("id")
                end)
-    ClashOfClansSlackbot.Services.ClashApi.list_bad_donators
+    bad_donators = ClashOfClansSlackbot.Services.ClashApi.list_bad_donators
       |> Enum.map(fn %{name: name, donations: donations, donations_received: donations_received} -> "#{name}: #{donations} / #{donations_received}" end)
+    ["Now showing all people with bad donations, in the format: name: donations / donations received..." | bad_donators]
       |> Enum.join("\n")
       |> post_message(Task.await(channel_id), token)
   end
