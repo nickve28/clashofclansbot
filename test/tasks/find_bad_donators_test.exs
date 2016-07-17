@@ -4,7 +4,7 @@ defmodule Tasks.FindBadDonatorsTest do
 
   @slack_stub_post %{"channel" => "C0M8JL814",
   "message" => %{"bot_id" => "B17HZ163U", "subtype" => "bot_message",
-    "text" => "[C]rAnCkEt~: 0 / 0",
+    "text" => "Now showing all people with bad donations, in the format: name: donations / donations received...\n[C]rAnCkEt~: 0 / 0",
     "ts" => "1468666482.000003", "type" => "message", "username" => "bot"},
   "ok" => true, "ts" => "1468666482.000003", "warning" => "superfluous_charset"}
 
@@ -23,6 +23,7 @@ defmodule Tasks.FindBadDonatorsTest do
   test "should return a list of bad donators in formatted text" do
     expected = [%ClashOfClansSlackbot.Models.Player{name: "[C]rAnCkEt~", donations: 0, donations_received: 0}]
       |> Enum.map(fn %{name: name, donations: donations, donations_received: donations_received} -> "#{name}: #{donations} / #{donations_received}" end)
+    expected = ["Now showing all people with bad donations, in the format: name: donations / donations received..." | expected]
       |> Enum.join("\n")
 
     with_mock HTTPotion, [get: fn(_url, _headers) -> @clashapi_success_stub end,
