@@ -26,7 +26,7 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
     with_mock HTTPotion, [get: fn(_url, _headers) -> shared[:players] end] do
       ClashOfClansSlackbot.Services.ClashApi.start_link("#C8000C0", "sometoken")
       ClashOfClansSlackbot.Services.ClashApi.poll
-      assert ClashOfClansSlackbot.Services.ClashApi.list() === expected
+      assert Enum.sort(ClashOfClansSlackbot.Services.ClashApi.list()) === Enum.sort(expected)
     end
   end
 
@@ -40,7 +40,9 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
     with_mock HTTPotion, [get: fn(_url, _headers) -> shared[:players] end] do
       ClashOfClansSlackbot.Services.ClashApi.start_link("#C8000C0", "sometoken")
       ClashOfClansSlackbot.Services.ClashApi.poll
-      assert ClashOfClansSlackbot.Services.ClashApi.list_bad_donators === expected
+      assert Enum.sort(ClashOfClansSlackbot.Services.ClashApi.list_bad_donators) === Enum.sort(expected)
     end
   end
+
+  #@TODO(Test for grouping)
 end
