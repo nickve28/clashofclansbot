@@ -1,5 +1,7 @@
 defmodule ClashOfClansSlackbot.Services.ClashApi do
   @donation_treshold Application.get_env(:clash_of_clans_slackbot, :donation_treshold, 0.66)
+  @min_donations Application.get_env(:clash_of_clans_slackbot, :min_donations, 500)
+
   def start_link(clantag, token) do
     Agent.start_link(fn -> [token: token, clantag: clantag, players: []] end, name: __MODULE__)
   end
@@ -24,7 +26,7 @@ defmodule ClashOfClansSlackbot.Services.ClashApi do
 
   def list_bad_donators do
     list(fn %{donations: donations, donations_received: donations_received} ->
-           score_donations(donations, donations_received) <= @donation_treshold end)
+           donations < @min_donations || score_donations(donations, donations_received) <= @donation_treshold end)
   end
 
   def list(f) do

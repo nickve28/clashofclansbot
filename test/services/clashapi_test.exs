@@ -3,7 +3,7 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
   import Mock
 
   setup do
-    {:ok, players: %HTTPotion.Response{body: "{\"items\":[{\"tag\":\"#UGV82QR8\",\"name\":\"Zoyvod\",\"role\":\"coLeader\",\"expLevel\":99,\"league\":{\"id\":29000000,\"name\":\"Unranked\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png\"}},\"trophies\":2222,\"clanRank\":2,\"previousClanRank\":2,\"donations\":40,\"donationsReceived\":120},{\"tag\":\"#2JQL0822\",\"name\":\"[C]rAnCkEt~\",\"role\":\"admin\",\"expLevel\":141,\"league\":{\"id\":29000011,\"name\":\"Crystal League II\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/jhP36EhAA9n1ADafdQtCP-ztEAQjoRpY7cT8sU7SW8A.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/jhP36EhAA9n1ADafdQtCP-ztEAQjoRpY7cT8sU7SW8A.png\",\"medium\":\"https://api-assets.clashofclans.com/leagues/288/jhP36EhAA9n1ADafdQtCP-ztEAQjoRpY7cT8sU7SW8A.png\"}},\"trophies\":2178,\"clanRank\":4,\"previousClanRank\":4,\"donations\":0,\"donationsReceived\":0},{\"tag\":\"#8CJCGV9L\",\"name\":\"Nick\",\"role\":\"coLeader\",\"expLevel\":141,\"league\":{\"id\":29000009,\"name\":\"Gold League I\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\",\"medium\":\"https://api-assets.clashofclans.com/leagues/288/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\"}},\"trophies\":1856,\"clanRank\":10,\"previousClanRank\":7,\"donations\":469,\"donationsReceived\":452}],\"paging\":{\"cursors\":{}}}",
+    {:ok, players: %HTTPotion.Response{body: "{\"items\":[{\"tag\":\"#UGV82QR8\",\"name\":\"Zoyvod\",\"role\":\"coLeader\",\"expLevel\":99,\"league\":{\"id\":29000000,\"name\":\"Unranked\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png\"}},\"trophies\":2222,\"clanRank\":2,\"previousClanRank\":2,\"donations\":40,\"donationsReceived\":120},{\"tag\":\"#2JQL0822\",\"name\":\"[C]rAnCkEt~\",\"role\":\"admin\",\"expLevel\":141,\"league\":{\"id\":29000011,\"name\":\"Crystal League II\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/jhP36EhAA9n1ADafdQtCP-ztEAQjoRpY7cT8sU7SW8A.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/jhP36EhAA9n1ADafdQtCP-ztEAQjoRpY7cT8sU7SW8A.png\",\"medium\":\"https://api-assets.clashofclans.com/leagues/288/jhP36EhAA9n1ADafdQtCP-ztEAQjoRpY7cT8sU7SW8A.png\"}},\"trophies\":2178,\"clanRank\":4,\"previousClanRank\":4,\"donations\":0,\"donationsReceived\":0},{\"tag\":\"#8CJCGV9L\",\"name\":\"Nickadin\",\"role\":\"coLeader\",\"expLevel\":141,\"league\":{\"id\":29000009,\"name\":\"Gold League I\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\",\"medium\":\"https://api-assets.clashofclans.com/leagues/288/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\"}},\"trophies\":1856,\"clanRank\":10,\"previousClanRank\":7,\"donations\":469,\"donationsReceived\":452},{\"tag\":\"#8CJCGV9L\",\"name\":\"Nick\",\"role\":\"coLeader\",\"expLevel\":141,\"league\":{\"id\":29000009,\"name\":\"Gold League I\",\"iconUrls\":{\"small\":\"https://api-assets.clashofclans.com/leagues/72/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\",\"tiny\":\"https://api-assets.clashofclans.com/leagues/36/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\",\"medium\":\"https://api-assets.clashofclans.com/leagues/288/CorhMY9ZmQvqXTZ4VYVuUgPNGSHsO0cEXEL5WYRmB2Y.png\"}},\"trophies\":1856,\"clanRank\":10,\"previousClanRank\":7,\"donations\":569,\"donationsReceived\":452}],\"paging\":{\"cursors\":{}}}",
   headers: %HTTPotion.Headers{hdrs: ["cache-control": "public max-age=600",
      connection: "keep-alive", "content-length": "11806",
       "content-type": "application/json; charset=utf-8",
@@ -19,7 +19,8 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
     expected = [
       %ClashOfClansSlackbot.Models.Player{name: "Zoyvod", donations: 40, donations_received: 120},
       %ClashOfClansSlackbot.Models.Player{name: "[C]rAnCkEt~", donations: 0, donations_received: 0},
-      %ClashOfClansSlackbot.Models.Player{name: "Nick", donations: 469, donations_received: 452}
+      %ClashOfClansSlackbot.Models.Player{name: "Nickadin", donations: 469, donations_received: 452},
+      %ClashOfClansSlackbot.Models.Player{name: "Nick", donations: 569, donations_received: 452}
     ]
 
     with_mock HTTPotion, [get: fn(_url, _headers) -> shared[:players] end] do
@@ -31,7 +32,9 @@ defmodule ClashOfClansSlackbot.Services.ClashApiTest do
 
   test "list_bad_donators should return all bad donators", shared do
     expected= [
-      %ClashOfClansSlackbot.Models.Player{name: "[C]rAnCkEt~", donations: 0, donations_received: 0}
+      %ClashOfClansSlackbot.Models.Player{name: "Zoyvod", donations: 40, donations_received: 120},
+      %ClashOfClansSlackbot.Models.Player{name: "[C]rAnCkEt~", donations: 0, donations_received: 0},
+      %ClashOfClansSlackbot.Models.Player{name: "Nickadin", donations: 469, donations_received: 452}
     ]
 
     with_mock HTTPotion, [get: fn(_url, _headers) -> shared[:players] end] do
