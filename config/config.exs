@@ -34,5 +34,8 @@ config :quantum, cron: [
  "45 * * * *":       {Tasks.PollClashApi, :run}
 ]
 
+config :clash_of_clans_slackbot, donation_treshold: 0.66
+config :clash_of_clans_slackbot, min_donations: 500
+
 import_config "#{Mix.env}.exs"
 
