@@ -36,6 +36,16 @@ config :quantum, cron: [
 
 config :clash_of_clans_slackbot, donation_treshold: 0.66
 config :clash_of_clans_slackbot, min_donations: 500
+config :clash_of_clans_slackbot, player_links: %{
+  "Nickadin" => "Nick",
+  "Hit" => "Nick",
+  "[C]rAnCkEt~" => "Thunder ⚡⚡",
+  "Zoyvod" => "zoy",
+  "AceMichael" => "zoy",
+  "krill 2.0" => "juke",
+  "Nobody" => "Drew",
+  "Lock N Load" => "bullybound"
+}
 
 import_config "#{Mix.env}.exs"
 
