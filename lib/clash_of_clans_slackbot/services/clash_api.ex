@@ -53,7 +53,11 @@ defmodule ClashOfClansSlackbot.Services.ClashApi do
 
   def list_bad_donators, do: list(&filter_bad_donators/1)
 
-  def list(f), do: Agent.get(__MODULE__, fn x -> (x[:players]) |> f.() end)
+  def list(f) do
+    Agent.get(__MODULE__, fn x -> (x[:players]) end)
+      |> f.()
+      |> Enum.sort_by(fn x -> x.name |> String.downcase end)
+  end
 
   def list, do: list(fn players -> players end)
 end
