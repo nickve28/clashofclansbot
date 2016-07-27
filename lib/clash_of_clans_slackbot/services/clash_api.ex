@@ -46,15 +46,14 @@ defmodule ClashOfClansSlackbot.Services.ClashApi do
     donations / donations_received
   end
 
-  def list_bad_donators do
-    list(fn %{donations: donations, donations_received: donations_received} ->
-           donations < @min_donations || score_donations(donations, donations_received) <= @donation_treshold end)
+  defp filter_bad_donators(players) do
+    Enum.filter(players, fn %{donations: donations, donations_received: donations_received} ->
+      donations < @min_donations || score_donations(donations, donations_received) <= @donation_treshold end)
   end
 
-  def list(f) do
-    Agent.get(__MODULE__, fn x -> x[:players] |> Enum.filter(f) end)
-  end
-  def list do
-    Agent.get(__MODULE__, fn x -> x[:players] end)
-  end
+  def list_bad_donators, do: list(&filter_bad_donators/1)
+
+  def list(f), do: Agent.get(__MODULE__, fn x -> (x[:players]) |> f.() end)
+
+  def list, do: list(fn players -> players end)
 end
