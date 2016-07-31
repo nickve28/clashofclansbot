@@ -1,4 +1,6 @@
 defmodule ClashOfClansSlackbot.Services.ClashApi do
+  @vsn "0"
+
   @donation_treshold Application.get_env(:clash_of_clans_slackbot, :donation_treshold, 0.66)
   @min_donations Application.get_env(:clash_of_clans_slackbot, :min_donations, 500)
   @player_links Application.get_env(:clash_of_clans_slackbot, :player_links, %{})
