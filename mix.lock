@@ -6,6 +6,7 @@
   "edeliver": {:hex, :edeliver, "1.2.10", "89e24d7373b7f88a505dbf7c72d2dcda2c398b4796bd6b985de09d0f9f1d4565", [:mix], [{:exrm, ">= 0.16.0", [hex: :exrm, optional: false]}]},
   "erlware_commons": {:hex, :erlware_commons, "0.21.0", "a04433071ad7d112edefc75ac77719dd3e6753e697ac09428fc83d7564b80b15", [:rebar3], [{:cf, "0.2.1", [hex: :cf, optional: false]}]},
   "esqlite": {:hex, :esqlite, "0.2.2", "e4e8b39062a075e0bd4756b894dd2aa8edbf94c9081c1fb5c72dc705bf2f2d88", [:rebar, :make], []},
+  "excoveralls": {:hex, :excoveralls, "0.5.5", "d97b6fc7aa59c5f04f2fa7ec40fc0b7555ceea2a5f7e7c442aad98ddd7f79002", [:mix], [{:exjsx, "~> 3.0", [hex: :exjsx, optional: false]}, {:hackney, ">= 0.12.0", [hex: :hackney, optional: false]}]},
   "exjsx": {:hex, :exjsx, "3.2.0", "7136cc739ace295fc74c378f33699e5145bead4fdc1b4799822d0287489136fb", [:mix], [{:jsx, "~> 2.6.2", [hex: :jsx, optional: false]}]},
   "exrm": {:hex, :exrm, "1.0.6", "f708fc091dcacb93c1da58254a1ab34166d5ac3dca162877e878fe5d7a9e9dce", [:mix], [{:relx, "~> 3.5", [hex: :relx, optional: false]}]},
   "getopt": {:hex, :getopt, "0.8.2", "b17556db683000ba50370b16c0619df1337e7af7ecbf7d64fbf8d1d6bce3109b", [:rebar], []},

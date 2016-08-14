@@ -2,13 +2,18 @@ defmodule ClashOfClansSlackbot.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :clash_of_clans_slackbot,
-     version: "1.1.0",
-     elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     escript: [main_module: ClashOfClansSlackbot],
-     deps: deps]
+    [
+      app: :clash_of_clans_slackbot,
+      version: "1.1.0",
+      elixir: "~> 1.2",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      escript: [main_module: ClashOfClansSlackbot],
+      deps: deps,
+      #excoveralls config
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
+     ]
   end
 
   # Configuration for the OTP application
@@ -37,6 +42,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
      {:mock, "~> 0.1.3", only: :test},
      {:poison, "~> 2.0"},
      {:exrm, "~> 1.0.3"},
-     {:quantum, ">= 1.7.1"}]
+     {:quantum, ">= 1.7.1"},
+     {:excoveralls, "~> 0.5", only: :test}]
   end
 end
