@@ -23,13 +23,11 @@ defmodule MessageParser do
       |> Enum.map(&(String.strip &1))
     name = Enum.at parsed_names, 0
     ename = Enum.at parsed_names, 1
-    { :ok, req } = Clashcaller.Request.construct(name, ename, parsed_size)
-    { :ok, url } = Clashcaller.Request.to_form_body(req)
-                     |> Clashcaller.start_war
-    #write to db
-    Storage.save_url(url)
 
-    { :ok, "I started the war, it can be found here: #{url}" }
+    case ClashOfClansSlackbot.Services.ClashCaller.create_war(name, ename, parsed_size) do
+      { :ok, url } -> {:ok, "I started the war, it can be found here: #{url}"}
+      { :error, error_msg } -> {:error, "Oh no I could not start the war! #{error_msg}"}
+    end
   end
 
   defp parse_action("!reservations", []) do

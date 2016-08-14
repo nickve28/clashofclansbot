@@ -17,7 +17,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
   def application do
     [
       mod: {ClashOfClansSlackbot, []},
-      applications: [:logger, :slack, :httpotion, :poison, :websocket_client, :sqlitex, :edeliver, :exrm, :quantum]
+      applications: [:logger, :slack, :httpotion, :poison, :websocket_client, :exrm, :quantum]
     ]
   end
 
@@ -35,10 +35,8 @@ defmodule ClashOfClansSlackbot.Mixfile do
      {:websocket_client, git: "https://github.com/jeremyong/websocket_client"},
      {:httpotion, "~> 2.2.0"},
      {:mock, "~> 0.1.3", only: :test},
-     {:sqlitex, "~> 1.0.0"},
      {:poison, "~> 2.0"},
      {:exrm, "~> 1.0.3"},
-     {:edeliver, ">= 1.2.10"},
      {:quantum, ">= 1.7.1"}]
   end
 end
