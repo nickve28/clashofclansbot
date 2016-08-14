@@ -1,34 +1,30 @@
 defmodule Storage do
-  @db_name Application.get_env(:clash_of_clans_slackbot, :database) || "db.sqlite3"
+  @dir "data"
+  @filename Application.get_env(:clash_of_clans_slackbot, :war_url_filename) || "data/war_url.bk"
 
   def save_url(url) do
-    Sqlitex.with_db(@db_name, fn db ->
-      init db
-      save db, url
-    end)
+    :ok = make_db_dir
+    url
+      |> :erlang.term_to_binary
+      |> write_to_file
+  end
+
+  defp make_db_dir do
+    case File.mkdir(@dir) do
+      :ok -> :ok
+      {:error, :eexist} -> :ok
+      other -> other
+    end
+  end
+
+  defp write_to_file(link) do
+    File.write(@filename, link)
   end
 
   def get_war_url() do
-    { :ok, result } = Sqlitex.with_db(@db_name, fn db ->
-      Sqlitex.query(db, "SELECT * FROM war_urls ORDER BY id DESC LIMIT 1;")
-    end)
-    result
-      |> Enum.map(&(&1[:url]))
-      |> Enum.at(0)
-  end
-
-  defp init(db) do
-    Sqlitex.query(db, "
-      CREATE TABLE IF NOT EXISTS war_urls (
-        ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        url VARCHAR NOT NULL
-      );
-    ")
-  end
-
-  defp save(db, url) do
-    Sqlitex.query(db, "
-      INSERT INTO war_urls (url) VALUES ('#{url}');
-    ")
+    case File.read(@filename) do
+      {:ok, binary_url} -> :erlang.binary_to_term(binary_url)
+      _ -> raise :enoent
+    end
   end
 end
