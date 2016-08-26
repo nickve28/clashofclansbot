@@ -47,5 +47,6 @@ config :clash_of_clans_slackbot, player_links: %{
   "Lock N Load" => "bullybound"
 }
 
+
 import_config "#{Mix.env}.exs"
 

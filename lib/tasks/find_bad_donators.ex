@@ -1,5 +1,8 @@
 defmodule Tasks.FindBadDonators do
+  require Logger
+
   defp post_message(message, channel_id, token) do
+    Logger.info("Sending #{message}")
     Slack.Web.Chat.post_message(channel_id, message, %{token: token, as_user: true})
   end
 
