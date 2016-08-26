@@ -37,6 +37,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
      {:mock, "~> 0.1.3", only: :test},
      {:poison, "~> 2.0"},
      {:exrm, "~> 1.0.3"},
-     {:quantum, ">= 1.7.1"}]
+     {:quantum, ">= 1.7.1"},
+     {:logger_file_backend, "0.0.8"}]
   end
 end
