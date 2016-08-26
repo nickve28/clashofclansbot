@@ -17,7 +17,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
   def application do
     [
       mod: {ClashOfClansSlackbot, []},
-      applications: [:logger, :slack, :httpotion, :poison, :websocket_client, :exrm, :quantum]
+      applications: [:logger, :slack, :httpotion, :poison, :websocket_client, :exrm, :quantum, :logger_file_backend]
     ]
   end
 
