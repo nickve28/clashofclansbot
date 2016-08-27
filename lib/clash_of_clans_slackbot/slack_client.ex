@@ -28,10 +28,12 @@ defmodule SlackClient do
     { :ok }
   end
 
-  def handle_close(reason, slack) do
+  def handle_close(reason, socket_tuple) do
     Poison.encode!(reason)
       |> Logger.error
-    Poison.encode!(slack)
+    socket_tuple
+      |> Tuple.to_list
+      |> Enum.join(", ")
       |> Logger.error
     :ok
   end
