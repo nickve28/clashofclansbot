@@ -17,10 +17,11 @@ defmodule MessageParser do
   defp parse_action("!startwar", parameters) do
     [size | names ] = String.split parameters, " ", parts: 2
     parsed_size = String.to_integer size
-    parsed_names = Enum.at(names, 0)
+    parsed_names = names
+      |> List.first
       |> String.split(~r/"/)
       |> Enum.reject(&(&1 in @empty_values))
-      |> Enum.map(&(String.strip &1))
+      |> Enum.map(&String.strip/1)
     name = Enum.at parsed_names, 0
     ename = Enum.at parsed_names, 1
 
@@ -36,16 +37,11 @@ defmodule MessageParser do
 
   defp parse_action("!reservations", parameters) do
     { target, _ } = Integer.parse(parameters)
-    { :ok, request } = Storage.get_war_url
-      |> String.split("/")
-      |> List.last
-      |> Clashcaller.Request.construct
-    { :ok, reservations } = Clashcaller.Request.to_form_body(request)
-                              |> Clashcaller.overview
-    result = reservations
-      |> Enum.filter(&(&1.target === target))
-      |> to_output(target)
-    { :ok, result }
+
+    case ClashOfClansSlackbot.Services.ClashCaller.reservations(target) do
+      {:ok, reservations} -> {:ok, to_output(reservations)}
+      {:error, reason} -> {:ok, "I couldn't get the reservations!"}
+    end
   end
 
   defp parse_action("!war", _parameters) do
@@ -74,11 +70,9 @@ defmodule MessageParser do
     { :no_content, command }
   end
 
-  defp to_output([], target) do
-    "No reservations known for #{target}"
-  end
+  defp to_output([]), do: "No reservations known for this target"
 
-  defp to_output(reservations, _target) do
+  defp to_output(reservations) do
     reservations
       |> Enum.map(fn entry -> "Reservation for #{entry.player} with #{entry.stars}" end)
       |> Enum.join("\n")
