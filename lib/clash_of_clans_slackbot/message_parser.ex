@@ -80,5 +80,3 @@ defmodule MessageParser do
       |> Enum.join("\n")
   end
 end
-
-
