@@ -29,4 +29,13 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       |> Enum.filter(&(&1.target === target))
     { :ok, result }
   end
+
+  def reserve(target, name) do
+    warcode = Storage.get_war_url
+      |> String.split("/")
+      |> List.last
+    { :ok, req } = Clashcaller.Request.construct(target, name, warcode)
+    Clashcaller.Request.to_form_body(req)
+      |> Clashcaller.reserve_attack
+  end
 end

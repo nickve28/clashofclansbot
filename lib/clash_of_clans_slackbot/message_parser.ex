@@ -40,7 +40,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.reservations(target) do
       {:ok, reservations} -> {:ok, to_output(reservations)}
-      {:error, reason} -> {:ok, "I couldn't get the reservations!"}
+      {:error, _reason} -> {:ok, "I couldn't get the reservations!"}
     end
   end
 
@@ -51,12 +51,11 @@ defmodule MessageParser do
   defp parse_action("!reserve", parameters) do
     [target, name] = String.split parameters, " ", parts: 2
     {target, _} = Integer.parse target
-    warcode = Storage.get_war_url
-      |> String.split("/")
-      |> List.last
-    { :ok, req } = Clashcaller.Request.construct(target, name, warcode)
-    Clashcaller.Request.to_form_body(req)
-      |> Clashcaller.reserve_attack
+
+    case ClashOfClansSlackbot.Services.ClashCaller.reserve(target, name) do
+      {:ok, msg} -> {:ok, msg}
+      {:error, _reason} -> {:ok, "Oh no, something went wrong!"}
+    end
   end
 
   defp parse_action("!attack", parameters) do
