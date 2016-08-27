@@ -17,6 +17,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       |> Clashcaller.start_war()
   end
 
+  def get_current_war_url, do: {:ok, Storage.get_war_url()}
+
   def reservations(target) do
     { :ok, request } = Storage.get_war_url
       |> String.split("/")

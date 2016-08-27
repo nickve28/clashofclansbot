@@ -41,7 +41,12 @@ defmodule MessageParser do
     end
   end
 
-  defp parse_action("!war", _parameters), do: {:ok, "The current war url is #{Storage.get_war_url}"}
+  defp parse_action("!war", _parameters) do
+    case ClashOfClansSlackbot.Services.ClashCaller.get_current_war_url() do
+      {:ok, url} -> {:ok, "The current war url is #{url}"}
+      {:error, _reason} -> {:ok, "Something went wrong while fetching the war url."}
+    end
+  end
 
   defp parse_action("!reserve", parameters) do
     [target, name] = String.split parameters, " ", parts: 2
