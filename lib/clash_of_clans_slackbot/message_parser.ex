@@ -13,6 +13,24 @@ defmodule MessageParser do
 
   defp parse_args([command]), do: parse_action(command, [])
 
+  defp parse_action("!overview", _) do
+    case ClashOfClansSlackbot.Services.ClashCaller.overview do
+      {:ok, []} -> {:ok, "No reservations have been made yet"}
+      {:ok, entries} -> {:ok, format_entries(entries)}
+      {:err, reason} -> {:ok, "Something went wrong!"}
+      _ -> {:ok, "Message could not be processed"}
+    end
+  end
+
+  defp format_entries(entries) do
+    text_entries = entries
+      |> Enum.map(fn %{player: name, target: target, stars: stars} ->
+        "Player #{name} has the best score on #{target} with: #{stars}"
+      end)
+    ["Now showing the overview of the current war:" | text_entries]
+      |> Enum.join("\n")
+  end
+
   defp parse_action("!startwar", parameters) do
     [size | names ] = String.split parameters, " ", parts: 2
     parsed_size = String.to_integer size
