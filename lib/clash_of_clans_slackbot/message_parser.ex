@@ -17,33 +17,17 @@ defmodule MessageParser do
     case ClashOfClansSlackbot.Services.ClashCaller.player_overview(player_name) do
       {:ok, []} -> {:ok, "Player #{player_name} has no reservations."}
       {:ok, reservations} -> {:ok, format_player_entries(reservations, player_name)}
+      _ -> {:ok, "Something went wrong!"}
     end
   end
 
-  defp format_player_entries(reservations, player_name) do
-    initial_message = "Reservations made by #{player_name}:"
-    reservation_overview_text = reservations
-      |> Enum.map(fn %{stars: stars, target: target} -> "#{stars} on base number #{target}" end)
-    [initial_message | reservation_overview_text]
-      |> Enum.join("\n")
-  end
-
-  defp parse_action("!overview", "") do
+  defp parse_action("!overview", empty) when empty === "" do
     case ClashOfClansSlackbot.Services.ClashCaller.overview do
       {:ok, []} -> {:ok, "No reservations have been made yet"}
       {:ok, entries} -> {:ok, format_entries(entries)}
-      {:err, reason} -> {:ok, "Something went wrong!"}
+      {:err, _} -> {:ok, "Something went wrong!"}
       _ -> {:ok, "Message could not be processed"}
     end
-  end
-
-  defp format_entries(entries) do
-    text_entries = entries
-      |> Enum.map(fn %{player: name, target: target, stars: stars} ->
-        "Player #{name} has the best score on #{target} with: #{stars}"
-      end)
-    ["Now showing the overview of the current war:" | text_entries]
-      |> Enum.join("\n")
   end
 
   defp parse_action("!startwar", parameters) do
@@ -99,11 +83,30 @@ defmodule MessageParser do
     case ClashOfClansSlackbot.Services.ClashCaller.attack(target, player, stars) do
       {:ok, msg} -> {:ok, msg}
       {:error, :enoreservation} -> {:ok, "No reservation found for that player"}
-      {:error, msg} -> {:ok, "I wasn't able to process that request!"}
+      {:error, _} -> {:ok, "I wasn't able to process that request!"}
     end
   end
 
   defp parse_action(command, _), do: { :no_content, command }
+
+
+
+  defp format_player_entries(reservations, player_name) do
+    initial_message = "Reservations made by #{player_name}:"
+    reservation_overview_text = reservations
+      |> Enum.map(fn %{stars: stars, target: target} -> "#{stars} on base number #{target}" end)
+    [initial_message | reservation_overview_text]
+      |> Enum.join("\n")
+  end
+
+  defp format_entries(entries) do
+    text_entries = entries
+      |> Enum.map(fn %{player: name, target: target, stars: stars} ->
+        "Player #{name} has the best score on #{target} with: #{stars}"
+      end)
+    ["Now showing the overview of the current war:" | text_entries]
+      |> Enum.join("\n")
+  end
 
   defp to_output([]), do: "No reservations known for this target"
 
