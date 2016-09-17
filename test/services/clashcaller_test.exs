@@ -56,6 +56,34 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
       assert result === {:ok, []}
     end
   end
+
+  test "when calling player overview but player has no registrations it should return an empty list" do
+    with_mock HTTPotion, [post: fn (_url, form) ->
+      body = form[:body]
+      assert String.match?(body, ~r/warcode=1234/)
+      @mock_clashcaller_reservations
+    end] do
+      result = ClashOfClansSlackbot.Services.ClashCaller.player_overview("Jukie")
+      assert result === {:ok, []}
+    end
+  end
+
+  test "when calling player overview it should return the player reservations" do
+    expected = [
+      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5},
+      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
+    ]
+    with_mock HTTPotion, [post: fn (_url, form) ->
+      body = form[:body]
+      assert String.match?(body, ~r/warcode=1234/)
+      @mock_clashcaller_reservations
+    end] do
+      result = ClashOfClansSlackbot.Services.ClashCaller.player_overview("Nick")
+      assert result === {:ok, expected}
+    end
+  end
+
+
 end
 
 
