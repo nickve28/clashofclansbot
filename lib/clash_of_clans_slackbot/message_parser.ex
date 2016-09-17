@@ -21,7 +21,7 @@ defmodule MessageParser do
     end
   end
 
-  defp parse_action("!overview", empty) when empty === "" do
+  defp parse_action("!overview", []) do
     case ClashOfClansSlackbot.Services.ClashCaller.overview do
       {:ok, []} -> {:ok, "No reservations have been made yet"}
       {:ok, entries} -> {:ok, format_entries(entries)}
