@@ -90,4 +90,27 @@ defmodule MessageParserTest do
       assert MessageParser.parse_response("!attack 3 nick 3") === { :ok, "<success>" }
     end
   end
+
+  test "!overview <player> should return the reservations made by that player" do
+    Storage.save_url @mock_url
+    with_mock Clashcaller, [overview: fn (_req) ->
+      { :ok, [@mock_reservation] }
+    end] do
+
+      expected = "Reservations made by nick:\nNo attack on base number 3"
+      assert MessageParser.parse_response("!overview nick") === {:ok, expected}
+    end
+  end
+
+  test "!overview <player> should return no known reservations if none known" do
+    Storage.save_url @mock_url
+    with_mock Clashcaller, [overview: fn (_req) ->
+      { :ok, [] }
+    end] do
+
+      expected = "Player nick has no reservations."
+      assert MessageParser.parse_response("!overview nick") === {:ok, expected}
+    end
+  end
+
 end

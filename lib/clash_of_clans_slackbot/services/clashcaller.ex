@@ -44,6 +44,16 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       |> Clashcaller.reserve_attack
   end
 
+  def player_overview(player_name) do
+    warcode = parse_war_code
+    {:ok, request} = Clashcaller.Request.construct(warcode)
+    {:ok, reservations} = request
+      |> Clashcaller.Request.to_form_body
+      |> Clashcaller.overview
+    reservations
+      |> to_overview(fn %{player: name} -> name === player_name end)
+  end
+
   def overview do
     warcode = parse_war_code
     {:ok, request} = Clashcaller.Request.construct(warcode)
@@ -54,6 +64,14 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       |> to_overview
   end
 
+  defp to_overview(reservations, filter_fun) do
+    reservations = reservations
+      |> Enum.filter(filter_fun)
+      |> Enum.sort(&overview_sorter/2)
+    {:ok, reservations}
+  end
+
+  defp to_overview([], _), do: {:ok, []}
   defp to_overview([]), do: {:ok, []}
 
   defp overview_sorter(x, y) do

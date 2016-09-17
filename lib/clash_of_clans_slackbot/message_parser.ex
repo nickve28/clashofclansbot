@@ -13,7 +13,22 @@ defmodule MessageParser do
 
   defp parse_args([command]), do: parse_action(command, [])
 
-  defp parse_action("!overview", _) do
+  defp parse_action("!overview", player_name) when is_binary(player_name) do
+    case ClashOfClansSlackbot.Services.ClashCaller.player_overview(player_name) do
+      {:ok, []} -> {:ok, "Player #{player_name} has no reservations."}
+      {:ok, reservations} -> {:ok, format_player_entries(reservations, player_name)}
+    end
+  end
+
+  defp format_player_entries(reservations, player_name) do
+    initial_message = "Reservations made by #{player_name}:"
+    reservation_overview_text = reservations
+      |> Enum.map(fn %{stars: stars, target: target} -> "#{stars} on base number #{target}" end)
+    [initial_message | reservation_overview_text]
+      |> Enum.join("\n")
+  end
+
+  defp parse_action("!overview", "") do
     case ClashOfClansSlackbot.Services.ClashCaller.overview do
       {:ok, []} -> {:ok, "No reservations have been made yet"}
       {:ok, entries} -> {:ok, format_entries(entries)}
