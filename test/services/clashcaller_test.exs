@@ -82,8 +82,6 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
       assert result === {:ok, expected}
     end
   end
-
-
 end
 
 

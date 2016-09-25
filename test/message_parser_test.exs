@@ -5,6 +5,8 @@ defmodule MessageParserTest do
 
   @mock_url "http://clashcaller.com/war/1234"
   @mock_reservation %Clashcaller.ClashcallerEntry{player: "nick", stars: "No attack", target: 3, position: 1}
+  @mock_reservation_spaces %Clashcaller.ClashcallerEntry{player: "drew the trash bin", stars: "No attack", target: 3, position: 1}
+
 
   test "parse_response should respond with no content if the message does not start with a valid command" do
     result = MessageParser.parse_response "start 10 man war"
@@ -88,6 +90,17 @@ defmodule MessageParserTest do
       { :ok, "<success>" }
     end] do
       assert MessageParser.parse_response("!attack 3 nick 3") === { :ok, "<success>" }
+    end
+  end
+
+  test "!attack <target> <name> <stars> should succeed even if the playername contains spaces" do
+    Storage.save_url @mock_url
+    with_mock Clashcaller, [overview: fn (_req) ->
+      { :ok, [@mock_reservation_spaces] }
+    end, register_attack: fn (_req) ->
+      { :ok, "<success>" }
+    end] do
+      assert MessageParser.parse_response("!attack 3 drew the trash bin 2") === {:ok, "<success>"}
     end
   end
 
