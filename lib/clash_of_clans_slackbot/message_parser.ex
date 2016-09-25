@@ -76,7 +76,16 @@ defmodule MessageParser do
   end
 
   defp parse_action("!attack", parameters) do
-    [target, player, stars] = String.split(parameters, " ")
+    [target, _] = String.split(parameters, " ", parts: 2)
+    stars = String.split(parameters)
+      |> Enum.at(-1)
+    target_size = byte_size(target)
+    stars_size = byte_size(target)
+    player_size = byte_size(parameters) - target_size - stars_size
+
+    <<^target::binary-size(target_size), player::binary-size(player_size), ^stars::binary-size(stars_size)>> = parameters
+    player = player
+      |> String.strip
     {target, _} = Integer.parse(target)
     {stars, _} = Integer.parse(stars)
 
