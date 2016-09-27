@@ -17,9 +17,10 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
  status_code: 200}
 
 
-  setup_all do
+  setup do
     mock_url = "http://clashcaller.com/war/1234"
     Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
     :ok
   end
@@ -36,9 +37,8 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
       %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
     ]
 
-    with_mock HTTPotion, [post: fn (_url, form) ->
-      body = form[:body]
-      assert String.match?(body, ~r/warcode=1234/)
+
+    with_mock HTTPotion, [post: fn (_url, _form) ->
       @mock_clashcaller_reservations
     end] do
       result = ClashOfClansSlackbot.Services.ClashCaller.overview
@@ -47,6 +47,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
   end
 
   test "when calling overview but no registrations have yet been made it should return an empty list" do
+
     with_mock HTTPotion, [post: fn (_url, form) ->
       body = form[:body]
       assert String.match?(body, ~r/warcode=1234/)

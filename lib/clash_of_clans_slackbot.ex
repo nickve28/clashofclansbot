@@ -16,7 +16,8 @@ defmodule ClashOfClansSlackbot do
       { :err, err_msg } -> IO.puts err_msg
       _ -> children = [
           worker(SlackClient, [token]),
-          worker(ClashOfClansSlackbot.Services.ClashApi, [clantag, clashapi_token])
+          worker(ClashOfClansSlackbot.Services.ClashApi, [clantag, clashapi_token]),
+          worker(ClashOfClansSlackbot.Services.ClashCaller, [])
         ]
         Supervisor.start_link(children, strategy: :one_for_one)
     end
