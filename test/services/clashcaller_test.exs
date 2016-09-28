@@ -25,6 +25,19 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     :ok
   end
 
+  test "when calling overview it should put the war state in the correct format" do
+    mock_url = "http://clashcaller.com/war/1234"
+
+    expected = {mock_url, []}
+
+    with_mock HTTPotion, [post: fn (_url, _form) ->
+      @mock_clashcaller_no_reservations
+    end] do
+      result = ClashOfClansSlackbot.Services.ClashCaller.overview
+      assert :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller) === expected
+    end
+  end
+
   test "when calling overview it should output the war overview, sorted and showing the best results per target" do
     expected = [
       %Clashcaller.ClashcallerEntry{player: "Zoy", position: 1, stars: "No attack", target: 1},

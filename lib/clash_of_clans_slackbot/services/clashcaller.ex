@@ -101,7 +101,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       |> Clashcaller.overview
     {:ok, filtered_reservations} = reservations
       |> to_overview
-    {:reply, {:ok, filtered_reservations}, reservations}
+    {:reply, {:ok, filtered_reservations}, {url, reservations}}
   end
 
   defp to_overview(reservations, filter_fun) do
