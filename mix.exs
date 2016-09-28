@@ -3,7 +3,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
 
   def project do
     [app: :clash_of_clans_slackbot,
-     version: "1.1.6",
+     version: "1.2.0",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
