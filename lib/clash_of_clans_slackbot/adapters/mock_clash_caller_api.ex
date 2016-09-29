@@ -1,0 +1,2 @@
+defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
+end

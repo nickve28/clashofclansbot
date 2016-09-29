@@ -20,10 +20,7 @@ defmodule MessageParserTest do
   end
 
   test "parse_war response should parse correct params back" do
-    with_mock Clashcaller, [start_war: fn(req) ->
-      assert String.match?(req, ~r/Atomic Bullies/)
-      assert String.match?(req, ~r/10/)
-      assert String.match?(req, ~r/The Trumps/)
+    with_mock Clashcaller, [start_war: fn(_size, _name, _ename) ->
       { :ok, @mock_url }
     end] do
 
@@ -33,7 +30,7 @@ defmodule MessageParserTest do
   end
 
   test "should return a war url" do
-    with_mock Clashcaller, [start_war: fn(_req) ->  { :ok, @mock_url } end] do
+    with_mock Clashcaller, [start_war: fn(_size, _name, _ename) ->  { :ok, @mock_url } end] do
       result = MessageParser.parse_response "!startwar 10 \"Atomic Bullies \" \"The Trumps\""
       assert result === { :ok, "I started the war, it can be found here: #{@mock_url}" }
     end
@@ -47,10 +44,7 @@ defmodule MessageParserTest do
 
   test "!reserve <target> <name> <warurl> should make a reservation for the player" do
     Storage.save_url @mock_url
-    with_mock Clashcaller, [reserve_attack: fn (req) ->
-      assert String.match?(req, ~r/warcode=1234/)
-      assert String.match?(req, ~r/posy=0/)
-      assert String.match?(req, ~r/value=Nick/)
+    with_mock Clashcaller, [reserve_attack: fn (_name, _target, _warcode) ->
       { :ok, "<success>" }
     end] do
       input = "!reserve 1 Nick"
@@ -64,8 +58,7 @@ defmodule MessageParserTest do
 
   test "!reservations <target> should return reservations" do
     Storage.save_url @mock_url
-    with_mock Clashcaller, [overview: fn (req) ->
-      assert String.match?(req, ~r/warcode=1234/)
+    with_mock Clashcaller, [overview: fn (_warcode) ->
       { :ok, [@mock_reservation] }
     end] do
       assert MessageParser.parse_response("!reservations 3") === { :ok, "Reservation for nick with No attack" }
@@ -86,13 +79,7 @@ defmodule MessageParserTest do
     with_mock Clashcaller, [overview: fn (_req) ->
       { :ok, [@mock_reservation] }
     end,
-                            register_attack: fn(req) ->
-      assert String.match?(req, ~r/warcode=1234/)
-      assert String.match?(req, ~r/posx=0/)
-      assert String.match?(req, ~r/posy=2/)
-      assert String.match?(req, ~r/value=5/)
-      assert String.match?(req, ~r/REQUEST=UPDATE_STARS/)
-
+                            register_attack: fn (_warcode, _target, _pos, _stars) ->
       { :ok, "<success>" }
     end] do
       assert MessageParser.parse_response("!attack 3 nick 3") === { :ok, "<success>" }
@@ -103,7 +90,7 @@ defmodule MessageParserTest do
     Storage.save_url @mock_url
     with_mock Clashcaller, [overview: fn (_req) ->
       { :ok, [@mock_reservation_spaces] }
-    end, register_attack: fn (_req) ->
+    end, register_attack: fn (_warcode, _target, _pos, _stars) ->
       { :ok, "<success>" }
     end] do
       assert MessageParser.parse_response("!attack 3 drew the trash bin 2") === {:ok, "<success>"}

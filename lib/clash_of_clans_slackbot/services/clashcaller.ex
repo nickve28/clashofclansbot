@@ -22,10 +22,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:create_war, {name, ename, size}})
   end
 
-  def handle_call({:create_war, {name, ename, size}}, _from, state) do
-    {:ok, req} = Clashcaller.Request.construct(name, ename, size)
-
-    war_result = case start_war(req) do
+  def handle_call({:create_war, startwar_payload}, _from, state) do
+    war_result = case start_war(startwar_payload) do
       {:ok, url} ->
         Storage.save_url(url)
         result = {:ok, url}
@@ -36,10 +34,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     end
   end
 
-  defp start_war(request) do
-    request
-      |> Clashcaller.Request.to_form_body()
-      |> Clashcaller.start_war()
+  defp start_war({name, ename, size}) do
+    Clashcaller.start_war(name, ename, size)
   end
 
   def get_current_war_url, do: GenServer.call(__MODULE__, :war)
@@ -54,9 +50,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call({:reservations, target}, _from, {url, _} = state) do
     warcode = parse_war_code(url)
-    {:ok, request} = Clashcaller.Request.construct(warcode)
-    { :ok, reservations } = Clashcaller.Request.to_form_body(request)
-                              |> Clashcaller.overview
+    {:ok, reservations} = Clashcaller.overview(warcode)
+
     result = reservations
       |> Enum.filter(&(&1.target === target))
     {:reply, { :ok, result }, state}
@@ -68,9 +63,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call({:reserve, target, name}, _from, {url, _} = state) do
     warcode = parse_war_code(url)
-    { :ok, req } = Clashcaller.Request.construct(target, name, warcode)
-    {:ok, reservations} = Clashcaller.Request.to_form_body(req)
-      |> Clashcaller.reserve_attack
+    {:ok, reservations} = Clashcaller.reserve_attack(target, name, warcode)
     {:reply, {:ok, reservations}, state}
   end
 
@@ -80,10 +73,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call({:player_overview, player_name}, _from, {url, current_reservations}) do
     warcode = parse_war_code(url)
-    {:ok, request} = Clashcaller.Request.construct(warcode)
-    {:ok, reservations} = request
-      |> Clashcaller.Request.to_form_body
-      |> Clashcaller.overview
+    {:ok, reservations} = Clashcaller.overview(warcode)
     {:ok, filtered_reservations} = reservations
       |> to_overview(fn %{player: name} -> name === player_name end)
     {:reply, {:ok, filtered_reservations}, {url, filtered_reservations}}
@@ -95,10 +85,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call(:overview, _from, {url, current_reservations}) do
     warcode = parse_war_code(url)
-    {:ok, request} = Clashcaller.Request.construct(warcode)
-    {:ok, reservations} = request
-      |> Clashcaller.Request.to_form_body
-      |> Clashcaller.overview
+    {:ok, reservations} = Clashcaller.overview(warcode)
     {:ok, filtered_reservations} = reservations
       |> to_overview
     {:reply, {:ok, filtered_reservations}, {url, reservations}}
@@ -134,10 +121,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call({:attack, target, player, stars}, _from, {url, _} = state) do
     warcode = parse_war_code(url)
-    { :ok, request } = Clashcaller.Request.construct(warcode)
-    { :ok, reservations } = request
-                              |> Clashcaller.Request.to_form_body
-                              |> Clashcaller.overview
+    { :ok, reservations } = Clashcaller.overview(warcode)
     attacker = reservations
                  |> Enum.filter(&(&1.target === target))
                  |> find_attack_position(player)
@@ -154,10 +138,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   defp handle_attack_registration(nil, _, _, _), do: {:error, :enoreservation}
 
   defp handle_attack_registration(%{position: attack_position}, warcode, target, stars) do
-    { :ok, attack_request } = Clashcaller.Request.construct(warcode, target, attack_position, stars)
-    attack_request
-      |> Clashcaller.Request.to_form_body
-      |> Clashcaller.register_attack
+    Clashcaller.register_attack(warcode, target, attack_position, stars)
   end
 
   defp find_attack_position(reservations, player) do
