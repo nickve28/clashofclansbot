@@ -79,25 +79,20 @@ defmodule Clashcaller.RequestTest do
   test "start war" do
     with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller end,
                           start: fn -> true end] do
-      params = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
-                  "searchable=false"], "&"
-      assert Clashcaller.start_war(params) === { :ok, @mock_clashcaller_baseurl <> @mock_clashcaller.body }
+      assert Clashcaller.start_war(10, "foo", "bar") === { :ok, @mock_clashcaller_baseurl <> @mock_clashcaller.body }
     end
   end
 
   test "request fail clashcaller should return error" do
     with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_fail end,
                           start: fn -> true end] do
-      params = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
-                  "searchable=false"], "&"
-      assert Clashcaller.start_war(params) === { :err, @mock_clashcaller_fail }
+      assert Clashcaller.start_war(10, "foo", "bar") === { :err, @mock_clashcaller_fail }
     end
   end
 
   test "reserve attack" do
     with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_reserve_success end] do
-      params = Enum.join ["REQUEST=APPEND_CALL", "warcode=1234", "posy=1", "value=nick"], "&"
-      assert Clashcaller.reserve_attack(params) === { :ok, @mock_clashcaller_reserve_success.body }
+      assert Clashcaller.reserve_attack(1, "nick", "1234") === { :ok, @mock_clashcaller_reserve_success.body }
     end
   end
 
