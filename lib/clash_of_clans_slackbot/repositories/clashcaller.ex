@@ -50,7 +50,7 @@ defmodule Clashcaller do
   end
 
   def register_attack(warcode, target, attack_position, stars) do
-    {:ok, req} = Clashcaller.request.construct(warcode, target, attack_position, stars)
+    {:ok, req} = Clashcaller.Request.construct(warcode, target, attack_position, stars)
     request_form = req
       |> Clashcaller.Request.to_form_body
 
