@@ -86,7 +86,7 @@ defmodule Clashcaller.RequestTest do
   test "request fail clashcaller should return error" do
     with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_fail end,
                           start: fn -> true end] do
-      assert Clashcaller.start_war(10, "foo", "bar") === { :err, @mock_clashcaller_fail }
+      assert Clashcaller.start_war(10, "error", "bar") === {:err, %{code: 400}}
     end
   end
 
