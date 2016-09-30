@@ -24,16 +24,7 @@ defmodule Clashcaller do
   end
 
   def overview(warcode) do
-    {:ok, req} = Clashcaller.Request.construct(warcode)
-    request_form = req
-      |> Clashcaller.Request.to_form_body
-
-    result = HTTPotion.post @api, [headers: @form_headers,
-                                   body: request_form]
-    case HTTPotion.Response.success? result do
-      true  -> { :ok, convert_to_overview(result.body) }
-      false -> { :err, result }
-    end
+    @war_api.overview(warcode)
   end
 
   defp convert_to_overview(body) do

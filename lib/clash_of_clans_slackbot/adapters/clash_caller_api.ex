@@ -16,5 +16,24 @@ defmodule ClashOfClansSlackbot.Adapters.ClashCallerAPI do
       false -> { :err, result }
     end
   end
+  
+  def overview(warcode) do
+    {:ok, req} = Clashcaller.Request.construct(warcode)
+    request_form = req
+      |> Clashcaller.Request.to_form_body
+
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, convert_to_overview(result.body) }
+      false -> { :err, result }
+    end
+  end
+
+  defp convert_to_overview(body) do
+    Poison.Parser.parse!(body)
+      |> Map.get("calls")
+      |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
+  end
 end
 

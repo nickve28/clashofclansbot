@@ -98,8 +98,7 @@ defmodule Clashcaller.RequestTest do
 
   test "get overview" do
     with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_reversations_success end] do
-      params = "REQUEST=GET_FULL_UPDATE&warcode=1234"
-      assert Clashcaller.overview(params) === { :ok, @mock_clashcaller_reservations_parsed }
+      assert Clashcaller.overview("12345") === { :ok, @mock_clashcaller_reservations_parsed }
     end
   end
 end
