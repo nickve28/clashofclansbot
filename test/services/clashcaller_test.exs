@@ -62,6 +62,23 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     result = ClashOfClansSlackbot.Services.ClashCaller.player_overview("Nick")
     assert result === {:ok, expected}
   end
+
+  test "when calling reserve_attack it should return success" do
+    mock_url = "http://clashcaller.com/war/1234"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(1, "Nick")
+  end
+
+  test "when calling register attack it should return success" do
+    mock_url = "http://clashcaller.com/war/1234"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    assert ClashOfClansSlackbot.Services.ClashCaller.attack(5, "Nick", 3) === {:ok, "<success>"}
+  end
 end
+
 
 

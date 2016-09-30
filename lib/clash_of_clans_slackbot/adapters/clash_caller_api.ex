@@ -16,7 +16,7 @@ defmodule ClashOfClansSlackbot.Adapters.ClashCallerAPI do
       false -> { :err, result }
     end
   end
-  
+
   def overview(warcode) do
     {:ok, req} = Clashcaller.Request.construct(warcode)
     request_form = req
@@ -35,5 +35,32 @@ defmodule ClashOfClansSlackbot.Adapters.ClashCallerAPI do
       |> Map.get("calls")
       |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
   end
+
+  def reserve_attack(target, name, warcode) do
+    {:ok, req} = Clashcaller.Request.construct(target, name, warcode)
+    request_form = req
+      |> Clashcaller.Request.to_form_body
+
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, result.body }
+      false -> { :err, result }
+    end
+  end
+
+  def register_attack(warcode, target, attack_position, stars) do
+    {:ok, req} = Clashcaller.Request.construct(warcode, target, attack_position, stars)
+    request_form = req
+      |> Clashcaller.Request.to_form_body
+
+    result = HTTPotion.post @api, [headers: @form_headers,
+                                   body: request_form]
+    case HTTPotion.Response.success? result do
+      true  -> { :ok, result.body }
+      false -> { :err, result }
+    end
+  end
+
 end
 

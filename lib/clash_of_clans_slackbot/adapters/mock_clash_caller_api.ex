@@ -37,6 +37,13 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     Poison.Parser.parse!(response.body)
       |> Map.get("calls")
       |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
+  end
 
+  def reserve_attack(1, "Nick", "1234") do
+    {:ok, "<success>"}
+  end
+
+  def register_attack("1234", 5, 1, 3) do
+    {:ok, "<success>"}
   end
 end
