@@ -1,6 +1,8 @@
 defmodule ClashOfClansSlackbot.Services.ClashCaller do
   use GenServer
 
+  @time_module Application.get_env(:clash_of_clans_slackbot, :time_module)
+
   @mapping_stars  %{
     "No attack" => 0,
     "0 stars" => 1,
@@ -15,7 +17,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def init(_args) do
     url = Storage.get_war_url
-    {:ok, {url, []}}
+    state = {url, [], @time_module.local_time}
+    {:ok, state}
   end
 
   def create_war(name, ename, size) do
@@ -40,7 +43,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def get_current_war_url, do: GenServer.call(__MODULE__, :war)
 
-  def handle_call(:war, _from, {url, _} = state) do
+  def handle_call(:war, _from, {url, _, _} = state) do
     {:reply, {:ok, url}, state}
   end
 
@@ -48,7 +51,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:reservations, target})
   end
 
-  def handle_call({:reservations, target}, _from, {url, _} = state) do
+  def handle_call({:reservations, target}, _from, {url, _, _} = state) do
     warcode = parse_war_code(url)
     {:ok, reservations} = Clashcaller.overview(warcode)
 
@@ -61,7 +64,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:reserve, target, name})
   end
 
-  def handle_call({:reserve, target, name}, _from, {url, _} = state) do
+  def handle_call({:reserve, target, name}, _from, {url, _, _} = state) do
     warcode = parse_war_code(url)
     {:ok, reservations} = Clashcaller.reserve_attack(target, name, warcode)
     {:reply, {:ok, reservations}, state}
@@ -71,24 +74,24 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:player_overview, player_name})
   end
 
-  def handle_call({:player_overview, player_name}, _from, {url, current_reservations}) do
+  def handle_call({:player_overview, player_name}, _from, {url, current_reservations, last_synced}) do
     warcode = parse_war_code(url)
     {:ok, reservations} = Clashcaller.overview(warcode)
     {:ok, filtered_reservations} = reservations
       |> to_overview(fn %{player: name} -> name === player_name end)
-    {:reply, {:ok, filtered_reservations}, {url, filtered_reservations}}
+    {:reply, {:ok, filtered_reservations}, {url, filtered_reservations, last_synced}}
   end
 
   def overview do
     GenServer.call(__MODULE__, :overview)
   end
 
-  def handle_call(:overview, _from, {url, current_reservations}) do
+  def handle_call(:overview, _from, {url, current_reservations, last_synced}) do
     warcode = parse_war_code(url)
     {:ok, reservations} = Clashcaller.overview(warcode)
     {:ok, filtered_reservations} = reservations
       |> to_overview
-    {:reply, {:ok, filtered_reservations}, {url, reservations}}
+    {:reply, {:ok, filtered_reservations}, {url, reservations, last_synced}}
   end
 
   defp to_overview(reservations, filter_fun) do
@@ -119,7 +122,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:attack, target, player, stars})
   end
 
-  def handle_call({:attack, target, player, stars}, _from, {url, _} = state) do
+  def handle_call({:attack, target, player, stars}, _from, {url, _, _} = state) do
     warcode = parse_war_code(url)
     { :ok, reservations } = Clashcaller.overview(warcode)
     attacker = reservations

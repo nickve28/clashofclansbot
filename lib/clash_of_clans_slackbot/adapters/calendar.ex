@@ -1,4 +1,4 @@
-#A convenience adapter for testing time related code
+#A convenience adapter for testing time related code, which uses erlang :calendar
 defmodule ClashOfClansSlackbot.Adapters.Calendar do
   use GenServer
 
@@ -10,7 +10,7 @@ defmodule ClashOfClansSlackbot.Adapters.Calendar do
   def init(local_time), do: {:ok, local_time}
 
   def start_link do
-    GenServer.start_link(__MODULE__, [:calendar.local_time()], name: __MODULE__)
+    GenServer.start_link(__MODULE__, :calendar.local_time(), name: __MODULE__)
   end
 
   def get_time(nil) do

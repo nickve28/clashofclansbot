@@ -6,7 +6,9 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    expected = {mock_url, []}
+    time = ClashOfClansSlackbot.Adapters.Calendar.local_time
+
+    expected = {mock_url, [], time}
 
     result = ClashOfClansSlackbot.Services.ClashCaller.overview
     assert :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller) === expected
