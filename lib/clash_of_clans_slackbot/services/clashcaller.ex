@@ -88,7 +88,17 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call(:overview, _from, {url, current_reservations, last_synced}) do
     warcode = parse_war_code(url)
-    {:ok, reservations} = Clashcaller.overview(warcode)
+
+    current_time = @time_module.local_time
+      |> :calendar.datetime_to_gregorian_seconds
+
+    last_synced_seconds = :calendar.datetime_to_gregorian_seconds(last_synced)
+
+    {:ok, reservations} = case (current_time - last_synced_seconds) >= 300 do
+      false ->  {:ok, current_reservations}
+      _ ->  Clashcaller.overview(warcode)
+    end
+
     {:ok, filtered_reservations} = reservations
       |> to_overview
     {:reply, {:ok, filtered_reservations}, {url, reservations, last_synced}}
