@@ -35,6 +35,8 @@ config :quantum, cron: [
 ]
 
 config :clash_of_clans_slackbot, war_api: ClashOfClansSlackbot.Adapters.ClashCallerAPI
+config :clash_of_clans_slackbot, time_module: :calendar
+
 config :clash_of_clans_slackbot, donation_treshold: 0.66
 config :clash_of_clans_slackbot, min_donations: 500
 config :clash_of_clans_slackbot, player_links: %{
