@@ -8,9 +8,17 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
 
     time = ClashOfClansSlackbot.Adapters.Calendar.local_time
 
-    expected = {mock_url, [], time}
+    updated_time = time
+      |> :calendar.datetime_to_gregorian_seconds
+      |> Kernel.+(300)
+      |> :calendar.gregorian_seconds_to_datetime
+      |> ClashOfClansSlackbot.Adapters.Calendar.set_time
 
     result = ClashOfClansSlackbot.Services.ClashCaller.overview
+
+
+    expected = {mock_url, [], updated_time}
+
     assert :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller) === expected
   end
 

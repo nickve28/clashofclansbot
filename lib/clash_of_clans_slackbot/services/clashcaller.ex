@@ -83,25 +83,35 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   def overview do
+    GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, :overview)
   end
 
-  def handle_call(:overview, _from, {url, current_reservations, last_synced}) do
-    warcode = parse_war_code(url)
-
+  def handle_call(:sync, _from, {url, reservations, last_synced} = state) do
     current_time = @time_module.local_time
       |> :calendar.datetime_to_gregorian_seconds
 
-    last_synced_seconds = :calendar.datetime_to_gregorian_seconds(last_synced)
+    last_synced_time = last_synced
+      |> :calendar.datetime_to_gregorian_seconds
 
-    {:ok, reservations} = case (current_time - last_synced_seconds) >= 300 do
-      false ->  {:ok, current_reservations}
-      _ ->  Clashcaller.overview(warcode)
-    end
+    new_state = update_state(state, {current_time, last_synced_time})
+    {:reply, new_state, new_state}
+  end
 
+  defp update_state(state, {current_time, last_synced_time}) when (current_time - last_synced_time) < 300, do: state
+
+  defp update_state({url, reservations, lasy_synced}, _) do
+    warcode = parse_war_code(url)
+
+    {:ok, new_reservations} = Clashcaller.overview(warcode)
+    time = @time_module.local_time
+    {url, new_reservations, time}
+  end
+
+  def handle_call(:overview, _from, {_, reservations, _} = state) do
     {:ok, filtered_reservations} = reservations
       |> to_overview
-    {:reply, {:ok, filtered_reservations}, {url, reservations, last_synced}}
+    {:reply, {:ok, filtered_reservations}, state}
   end
 
   defp to_overview(reservations, filter_fun) do
