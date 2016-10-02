@@ -52,6 +52,16 @@ defmodule MessageParserTest do
     end
   end
 
+  test "!reserve <target> should work even if the name has appended whitespaces" do
+    Storage.save_url @mock_url
+    with_mock Clashcaller, [reserve_attack: fn (_target, name, _warcode) ->
+      assert name === "nick"
+      { :ok, [] }
+    end] do
+      MessageParser.parse_response("!reserve 3 nick ")
+    end
+  end
+
   test "!reservations <empty> should not work" do
     { :no_content, _ } = MessageParser.parse_response("!reservations")
   end
@@ -64,6 +74,7 @@ defmodule MessageParserTest do
       assert MessageParser.parse_response("!reservations 3") === { :ok, "Reservation for nick with No attack" }
     end
   end
+
 
   test "!attack <target> <name> <stars> should fail if no reservation can be found" do
     Storage.save_url @mock_url

@@ -68,6 +68,7 @@ defmodule MessageParser do
   defp parse_action("!reserve", parameters) do
     [target, name] = String.split parameters, " ", parts: 2
     {target, _} = Integer.parse target
+    name = String.strip(name)
 
     case ClashOfClansSlackbot.Services.ClashCaller.reserve(target, name) do
       {:ok, msg} -> {:ok, msg}
