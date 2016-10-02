@@ -27,6 +27,12 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:ok, res}
   end
 
+  def overview("2345") do
+    {:ok, [
+      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
+    ]}
+  end
+
   def overview("1234") do
     res = @mock_clashcaller_reservations
       |> to_players

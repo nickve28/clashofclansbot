@@ -1,6 +1,20 @@
 defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
   use ExUnit.Case
 
+  test "when starting the service it should sync at startup" do
+    mock_url = "http://clashcaller.com/war/2345"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+     expected = [
+      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
+    ]
+
+    {_, reservations, _} = :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller)
+
+    assert reservations === expected
+  end
+
   test "when calling overview it should put the war state in the correct format" do
     mock_url = "http://clashcaller.com/war/empty"
     Storage.save_url(mock_url)
@@ -87,14 +101,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
       %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
     ]
 
-    #remove when bootup sync implemented
-    ClashOfClansSlackbot.Adapters.Calendar.local_time
-      |> :calendar.datetime_to_gregorian_seconds
-      |> Kernel.+(300)
-      |> :calendar.gregorian_seconds_to_datetime
-      |> ClashOfClansSlackbot.Adapters.Calendar.set_time
-
-    result = ClashOfClansSlackbot.Services.ClashCaller.overview
+   result = ClashOfClansSlackbot.Services.ClashCaller.overview
     assert result === {:ok, expected}
   end
 

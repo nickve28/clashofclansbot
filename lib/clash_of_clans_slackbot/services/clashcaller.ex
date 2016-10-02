@@ -17,7 +17,10 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def init(_args) do
     url = Storage.get_war_url
-    state = {url, [], @time_module.local_time}
+    force_sync_time_tuple = {300, 0}
+
+    state = {url, [], {}}
+      |> update_state(force_sync_time_tuple)
     {:ok, state}
   end
 
@@ -100,7 +103,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   defp update_state(state, {current_time, last_synced_time}) when (current_time - last_synced_time) < 300, do: state
 
-  defp update_state({url, reservations, lasy_synced}, _) do
+  defp update_state({url, _, _}, _) do
     warcode = parse_war_code(url)
 
     {:ok, new_reservations} = Clashcaller.overview(warcode)
