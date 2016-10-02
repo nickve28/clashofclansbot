@@ -2,6 +2,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   use GenServer
 
   @time_module Application.get_env(:clash_of_clans_slackbot, :time_module)
+  #investigate something like
+  #before_action [:create_war, :overview], do: :sync
 
   @mapping_stars  %{
     "No attack" => 0,
@@ -22,6 +24,27 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     state = {url, [], {}}
       |> update_state(force_sync_time_tuple)
     {:ok, state}
+  end
+
+  def handle_call(:sync, _from, {url, reservations, last_synced} = state) do
+    current_time = @time_module.local_time
+      |> :calendar.datetime_to_gregorian_seconds
+
+    last_synced_time = last_synced
+      |> :calendar.datetime_to_gregorian_seconds
+
+    new_state = update_state(state, {current_time, last_synced_time})
+    {:reply, new_state, new_state}
+  end
+
+  defp update_state(state, {current_time, last_synced_time}) when (current_time - last_synced_time) < 300, do: state
+
+  defp update_state({url, _, _}, _) do
+    warcode = parse_war_code(url)
+
+    {:ok, new_reservations} = Clashcaller.overview(warcode)
+    time = @time_module.local_time
+    {url, new_reservations, time}
   end
 
   def create_war(name, ename, size) do
@@ -64,6 +87,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   def reserve(target, name) do
+    GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, {:reserve, target, name})
   end
 
@@ -74,6 +98,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   def player_overview(player_name) do
+    GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, {:player_overview, player_name})
   end
 
@@ -88,27 +113,6 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   def overview do
     GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, :overview)
-  end
-
-  def handle_call(:sync, _from, {url, reservations, last_synced} = state) do
-    current_time = @time_module.local_time
-      |> :calendar.datetime_to_gregorian_seconds
-
-    last_synced_time = last_synced
-      |> :calendar.datetime_to_gregorian_seconds
-
-    new_state = update_state(state, {current_time, last_synced_time})
-    {:reply, new_state, new_state}
-  end
-
-  defp update_state(state, {current_time, last_synced_time}) when (current_time - last_synced_time) < 300, do: state
-
-  defp update_state({url, _, _}, _) do
-    warcode = parse_war_code(url)
-
-    {:ok, new_reservations} = Clashcaller.overview(warcode)
-    time = @time_module.local_time
-    {url, new_reservations, time}
   end
 
   def handle_call(:overview, _from, {_, reservations, _} = state) do
@@ -142,6 +146,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   def attack(target, player, stars) do
+    GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, {:attack, target, player, stars})
   end
 
