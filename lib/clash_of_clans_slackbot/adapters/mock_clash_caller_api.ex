@@ -33,6 +33,10 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     ]}
   end
 
+  def overview("reservation_" <> target) do
+    {:ok, [%Clashcaller.ClashcallerEntry{player: "Nick", position: 0, stars: "No attack", target: target}]}
+  end
+
   def overview("1234") do
     res = @mock_clashcaller_reservations
       |> to_players
@@ -48,6 +52,15 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
   def reserve_attack(1, "Nick", "1234") do
     {:ok, "<success>"}
   end
+
+  def reserve_attack(2, "Nick", "empty") do
+    {:ok, "<success>"}
+  end
+
+  def reserve_attack(2, "Nick", "reservation_2") do
+    {:ok, "<success>"}
+  end
+
 
   def register_attack("1234", 5, 1, 3) do
     {:ok, "<success>"}

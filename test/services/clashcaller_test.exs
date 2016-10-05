@@ -136,21 +136,44 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     assert result === {:ok, expected}
   end
 
-  test "when calling reserve_attack it should return success" do
+  test "when calling reserve_attack it should return the reservation" do
+    mock_url = "http://clashcaller.com/war/empty"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 0, stars: "No attack", target: 2}
+
+    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick") === {:ok, expected}
+  end
+
+  test "when calling reserve_attack on a target with a reservation it should assume the next position" do
+    mock_url = "http://clashcaller.com/war/reservation_2"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 2}
+
+    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick") === {:ok, expected}
+  end
+
+  test "when calling register attack it should return the updated entry" do
     mock_url = "http://clashcaller.com/war/1234"
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(1, "Nick")
+    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
+    assert ClashOfClansSlackbot.Services.ClashCaller.attack(5, "Nick", 3) === {:ok, expected}
   end
 
-  test "when calling register attack it should return success" do
-    mock_url = "http://clashcaller.com/war/1234"
+  test "when calling register attack but there is no reservation it should return an error" do
+    mock_url = "http://clashcaller.com/war/empty"
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    assert ClashOfClansSlackbot.Services.ClashCaller.attack(5, "Nick", 3) === {:ok, "<success>"}
+    expected = {:error, :enoreservation}
+    assert ClashOfClansSlackbot.Services.ClashCaller.attack(5, "Nick", 3) === expected
   end
+
 end
 
 

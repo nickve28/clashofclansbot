@@ -2,10 +2,8 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   use GenServer
 
   @time_module Application.get_env(:clash_of_clans_slackbot, :time_module)
-  #investigate something like
-  #before_action [:create_war, :overview], do: :sync
 
-  @mapping_stars  %{
+  @mapping_stars %{
     "No attack" => 0,
     "0 stars" => 1,
     "1 star" => 2,
@@ -56,7 +54,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       {:ok, url} ->
         Storage.save_url(url)
         result = {:ok, url}
-        {:reply, result, {url, []}}
+        {:reply, result, {url, []}} #add time + test
       {:error, msg} ->
         result = {:error, msg}
         {:reply, result, state}
@@ -91,10 +89,17 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:reserve, target, name})
   end
 
-  def handle_call({:reserve, target, name}, _from, {url, _, _} = state) do
+  def handle_call({:reserve, target, name}, _from, {url, reservations, last_synced} = state) do
     warcode = parse_war_code(url)
-    {:ok, reservations} = Clashcaller.reserve_attack(target, name, warcode)
-    {:reply, {:ok, reservations}, state}
+    {:ok, "<success>"} = Clashcaller.reserve_attack(target, name, warcode)
+
+    target_s = Integer.to_string(target)
+    position = reservations
+      |> Enum.filter(fn %{target: r_target} -> r_target === target_s end)
+      |> Enum.count
+
+    reservation = %Clashcaller.ClashcallerEntry{player: name, target: target, stars: "No attack", position: position}
+    {:reply, {:ok, reservation}, {url, [reservation | reservations], last_synced}}
   end
 
   def player_overview(player_name) do
@@ -150,15 +155,34 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     GenServer.call(__MODULE__, {:attack, target, player, stars})
   end
 
-  def handle_call({:attack, target, player, stars}, _from, {url, _, _} = state) do
+  def handle_call({:attack, target, player, stars}, _from, {url, reservations, last_synced} = state) do
     warcode = parse_war_code(url)
-    { :ok, reservations } = Clashcaller.overview(warcode)
     attacker = reservations
                  |> Enum.filter(&(&1.target === target))
                  |> find_attack_position(player)
-    response = handle_attack_registration(attacker, warcode, target, stars)
-    {:reply, response, state}
+
+    updated_attack = handle_attack_registration(attacker, warcode, target, stars)
+
+    case updated_attack do
+      {:ok, "<success>"} ->
+        updated_stars = Enum.at(Map.keys(@mapping_stars), stars)
+        attacker = %Clashcaller.ClashcallerEntry{attacker | stars: updated_stars}
+        updated_reservations = update_reservations(reservations, attacker)
+        {:reply, {:ok, attacker}, {url, updated_reservations, last_synced}}
+      error -> {:reply, error, state}
+    end
   end
+
+  defp update_reservations(reservations, attack) do
+    for reservation <- reservations, do: update_entry(reservation, attack)
+  end
+
+  defp update_entry(%Clashcaller.ClashcallerEntry{target: _target, player: _player} = player,
+   %Clashcaller.ClashcallerEntry{target: _target, player: _player, stars: stars}) do
+    %Clashcaller.ClashcallerEntry{player | stars: stars}
+  end
+
+  defp update_entry(old_reservation, _), do: old_reservation
 
   defp parse_war_code(code) do
     code
