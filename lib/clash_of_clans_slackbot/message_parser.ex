@@ -81,7 +81,7 @@ defmodule MessageParser do
     stars = String.split(parameters)
       |> Enum.at(-1)
     target_size = byte_size(target)
-    stars_size = byte_size(target)
+    stars_size = byte_size(stars)
     player_size = byte_size(parameters) - target_size - stars_size
 
     <<^target::binary-size(target_size), player::binary-size(player_size), ^stars::binary-size(stars_size)>> = parameters
