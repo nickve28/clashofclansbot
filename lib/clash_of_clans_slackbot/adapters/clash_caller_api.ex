@@ -1,4 +1,6 @@
 defmodule ClashOfClansSlackbot.Adapters.ClashCallerAPI do
+  @behaviour ClashOfClansSlackbot.Behaviors.WarAPI
+
   @base_url "http://clashcaller.com/"
   @api @base_url <> "api.php"
   @form_headers ["Accept": "application/x-www-form-urlencoded",
