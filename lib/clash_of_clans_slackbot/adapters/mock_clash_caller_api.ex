@@ -52,6 +52,8 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:ok, res}
   end
 
+  def overview(_), do: {:ok, []}
+
   defp to_players(response) do
     Poison.Parser.parse!(response.body)
       |> Map.get("calls")
