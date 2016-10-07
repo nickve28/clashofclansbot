@@ -73,33 +73,5 @@ defmodule Clashcaller.RequestTest do
     expected = Enum.join ["REQUEST=CREATE_WAR", "cname=foo", "ename=bar", "size=10", "timers=0",
                 "searchable=false"], "&"
     assert Clashcaller.Request.to_form_body(params) === expected
-
-  end
-
-  test "start war" do
-    with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller end,
-                          start: fn -> true end] do
-      assert Clashcaller.start_war(10, "foo", "bar") === { :ok, @mock_clashcaller_baseurl <> @mock_clashcaller.body }
-    end
-  end
-
-  test "request fail clashcaller should return error" do
-    with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_fail end,
-                          start: fn -> true end] do
-      assert Clashcaller.start_war(10, "foo", "bar") === { :err, @mock_clashcaller_fail }
-    end
-  end
-
-  test "reserve attack" do
-    with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_reserve_success end] do
-      assert Clashcaller.reserve_attack(1, "nick", "1234") === { :ok, @mock_clashcaller_reserve_success.body }
-    end
-  end
-
-  test "get overview" do
-    with_mock HTTPotion, [post: fn(_url, _headers) -> @mock_clashcaller_reversations_success end] do
-      params = "REQUEST=GET_FULL_UPDATE&warcode=1234"
-      assert Clashcaller.overview(params) === { :ok, @mock_clashcaller_reservations_parsed }
-    end
   end
 end
