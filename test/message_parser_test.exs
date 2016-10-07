@@ -17,6 +17,13 @@ defmodule MessageParserTest do
     assert result === { :ok, "I started the war, it can be found here: http://clashcaller.com/war/newwar"}
   end
 
+  test "calling !overview after !war should yield no reservations" do
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+    MessageParser.parse_response "!startwar 10 \"Init\" \"State\""
+    result = MessageParser.parse_response("!overview")
+    {:ok, _} = result
+  end
+
   test "!war should return the latest war url" do
     Storage.save_url("http://clashcaller.com/war/1234")
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
