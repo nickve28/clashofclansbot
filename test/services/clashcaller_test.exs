@@ -141,7 +141,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 0, stars: "No attack", target: 2}
+    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 2}
 
     assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick") === {:ok, expected}
   end
@@ -151,9 +151,9 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 2}
+    expected = %Clashcaller.ClashcallerEntry{player: "zoy", position: 2, stars: "No attack", target: 2}
 
-    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick") === {:ok, expected}
+    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "zoy") === {:ok, expected}
   end
 
   test "when calling register attack it should return the updated entry" do

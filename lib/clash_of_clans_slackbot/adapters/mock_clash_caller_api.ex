@@ -14,7 +14,11 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:err, %{code: 400}}
   end
 
-  def start_war(size, name, ename) do
+  def start_war("Atomic Bullies", "The Trumps", 10) do
+    {:ok, @base_url <> "war/newwar"}
+  end
+
+  def start_war(name, ename, size) do
     {:ok, @base_url <> "war/3tynq"}
   end
 
@@ -34,8 +38,12 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     ]}
   end
 
+  def overview("reservation_player_" <> name) do
+    {:ok, [%Clashcaller.ClashcallerEntry{player: name, position: 1, stars: "No attack", target: 1}]}
+  end
+
   def overview("reservation_" <> target) do
-    {:ok, [%Clashcaller.ClashcallerEntry{player: "Nick", position: 0, stars: "No attack", target: target}]}
+    {:ok, [%Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: String.to_integer(target)}]}
   end
 
   def overview("1234") do
@@ -62,8 +70,13 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:ok, "<success>"}
   end
 
+  def reserve_attack(2, "zoy", "reservation_2") do
+    {:ok, "<success>"}
+  end
 
   def register_attack("1234", 5, 1, 3) do
     {:ok, "<success>"}
   end
+
+  def register_attack(_, _, _, _), do: {:ok, "<success>"}
 end

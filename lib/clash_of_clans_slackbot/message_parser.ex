@@ -71,7 +71,7 @@ defmodule MessageParser do
     name = String.strip(name)
 
     case ClashOfClansSlackbot.Services.ClashCaller.reserve(target, name) do
-      {:ok, msg} -> {:ok, msg}
+      {:ok, player} -> {:ok, reservation_text(player)}
       {:error, _reason} -> {:ok, "Oh no, something went wrong!"}
     end
   end
@@ -91,7 +91,7 @@ defmodule MessageParser do
     {stars, _} = Integer.parse(stars)
 
     case ClashOfClansSlackbot.Services.ClashCaller.attack(target, player, stars) do
-      {:ok, msg} -> {:ok, msg}
+      {:ok, msg} -> {:ok, attack_text(msg)}
       {:error, :enoreservation} -> {:ok, "No reservation found for that player"}
       {:error, _} -> {:ok, "I wasn't able to process that request!"}
     end
@@ -99,6 +99,13 @@ defmodule MessageParser do
 
   defp parse_action(command, _), do: { :no_content, command }
 
+  defp reservation_text(%Clashcaller.ClashcallerEntry{player: name, target: target}) do
+    "Reservation for #{name} has been made on ##{target}"
+  end
+
+  defp attack_text(%Clashcaller.ClashcallerEntry{player: name, target: target, stars: score}) do
+    "#{name} attacked ##{target} with score: #{score}!"
+  end
 
 
   defp format_player_entries(reservations, player_name) do

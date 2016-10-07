@@ -72,6 +72,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   def reservations(target) do
+    GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, {:reservations, target})
   end
 
@@ -93,12 +94,11 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     warcode = parse_war_code(url)
     {:ok, "<success>"} = Clashcaller.reserve_attack(target, name, warcode)
 
-    target_s = Integer.to_string(target)
     position = reservations
-      |> Enum.filter(fn %{target: r_target} -> r_target === target_s end)
+      |> Enum.filter(fn %{target: r_target} -> r_target === target end)
       |> Enum.count
 
-    reservation = %Clashcaller.ClashcallerEntry{player: name, target: target, stars: "No attack", position: position}
+    reservation = %Clashcaller.ClashcallerEntry{player: name, target: target, stars: "No attack", position: position + 1}
     {:reply, {:ok, reservation}, {url, [reservation | reservations], last_synced}}
   end
 
