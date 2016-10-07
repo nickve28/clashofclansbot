@@ -54,7 +54,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       {:ok, url} ->
         Storage.save_url(url)
         result = {:ok, url}
-        {:reply, result, {url, []}} #add time + test
+        {:reply, result, {url, [], @time_module.local_time}}
       {:error, msg} ->
         result = {:error, msg}
         {:reply, result, state}

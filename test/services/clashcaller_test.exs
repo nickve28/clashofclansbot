@@ -174,6 +174,23 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     assert ClashOfClansSlackbot.Services.ClashCaller.attack(5, "Nick", 3) === expected
   end
 
+  test "when calling create war it should return the war url" do
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = {:ok, "http://clashcaller.com/war/newwar"}
+    assert ClashOfClansSlackbot.Services.ClashCaller.create_war("Atomic Bullies", "The Trumps", 10) === expected
+  end
+
+
+  test "when calling create war it should the time to current time " do
+    time = ClashOfClansSlackbot.Adapters.Calendar.local_time
+
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+    ClashOfClansSlackbot.Services.ClashCaller.create_war("Atomic Bullies", "The Trumps", 10)
+
+    {_, _, sync_time} = :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller)
+    assert sync_time === time
+  end
 end
 
 
