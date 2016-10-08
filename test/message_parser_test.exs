@@ -124,4 +124,15 @@ defmodule MessageParserTest do
     expected = "Player nick has no reservations."
     assert MessageParser.parse_response("!overview nick") === {:ok, expected}
   end
+
+  test "!help should give an overview of commands" do
+    commands = [
+      "!startwar", "!reservations", "!overview", "!reserve", "!attack"
+    ]
+    {:ok, result} = MessageParser.parse_response("!help")
+
+    Enum.each(commands, fn command ->
+      {_, _} = :binary.match(result, command)
+    end)
+  end
 end
