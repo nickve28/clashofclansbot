@@ -72,6 +72,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.reserve(target, name) do
       {:ok, player} -> {:ok, reservation_text(player)}
+      {:error, :ereservationexists} -> {:ok, "Player #{name} already has a reservation for ##{target}."}
       {:error, _reason} -> {:ok, "Oh no, something went wrong!"}
     end
   end
