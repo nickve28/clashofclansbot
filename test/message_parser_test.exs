@@ -49,6 +49,25 @@ defmodule MessageParserTest do
     assert MessageParser.parse_response(input) === expected
   end
 
+  test "!reserve <target> should give a response if a reservation already exists" do
+    Storage.save_url "http://clashcaller.com/war/reservation_1"
+
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+    expected = {:ok, "Player Nick already has a reservation for #1."}
+    input = "!reserve 1 Nick"
+    assert MessageParser.parse_response(input) === expected
+  end
+
+  test "!reserve <target> should give a response if a reservation already exists, trailing whitespace ignored" do
+    Storage.save_url "http://clashcaller.com/war/reservation_1"
+
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+    expected = {:ok, "Player Nick already has a reservation for #1."}
+    input = "!reserve 1 Nick  "
+    assert MessageParser.parse_response(input) === expected
+  end
+
+
   test "!reservations <empty> should not work" do
     { :no_content, _ } = MessageParser.parse_response("!reservations")
   end

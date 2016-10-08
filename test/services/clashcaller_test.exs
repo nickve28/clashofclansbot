@@ -156,6 +156,24 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "zoy") === {:ok, expected}
   end
 
+  test "when calling reserve_attack on a target that the player already reserved, it should return an error" do
+    mock_url = "http://clashcaller.com/war/reservation_2"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = {:error, :ereservationexists}
+    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick") === expected
+  end
+
+  test "when calling reserve_attack on a target that the player already reserved, it should return an error, regardless of name having trailing spaces" do
+    mock_url = "http://clashcaller.com/war/reservation_2"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = {:error, :ereservationexists}
+    assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick ") === expected
+  end
+
   test "when calling register attack it should return the updated entry" do
     mock_url = "http://clashcaller.com/war/1234"
     Storage.save_url(mock_url)
