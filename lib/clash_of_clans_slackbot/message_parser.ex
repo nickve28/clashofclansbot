@@ -98,6 +98,21 @@ defmodule MessageParser do
     end
   end
 
+  defp parse_action("!help", _) do
+    output = [
+      "The following commands are available:",
+      "!help - Shows the available command",
+      "!startwar <size> <clanname> <enemy clan> - Starts a new war",
+      "!overview - Gives an overview of the best scores on each target registered",
+      "!overview <playername> - Gives an overview of the attacks made by the player",
+      "!reservations <target_nr> - Gives an overview of the reservations on a specified target",
+      "!reserve <target_nr> <name> - Make a reservation on a target",
+      "!attack <target_nr> <name> <stars> - Set your score on a target, only works if you have reserved."
+    ]
+      |> Enum.join("\n")
+    {:ok, output}
+  end
+
   defp parse_action(command, _), do: { :no_content, command }
 
   defp reservation_text(%Clashcaller.ClashcallerEntry{player: name, target: target}) do
