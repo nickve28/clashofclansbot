@@ -230,6 +230,21 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
 
     assert ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(5, "Nick") === expected
   end
+
+  test "when calling remove_reservation while two reservations exist it should remove the matching reservation only" do
+    mock_url = "http://clashcaller.com/war/reservation_5"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    ClashOfClansSlackbot.Services.ClashCaller.reserve(5, "zoy")
+    expected = [
+      %Clashcaller.ClashcallerEntry{player: "Nick", target: 5, position: 1, stars: "No attack"}
+    ]
+
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(5, "zoy")
+    {:ok, reservations} = ClashOfClansSlackbot.Services.ClashCaller.reservations(5)
+    assert reservations === expected
+  end
 end
 
 

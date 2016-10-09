@@ -64,8 +64,8 @@ defmodule ClashOfClansSlackbot.Adapters.ClashCallerAPI do
     end
   end
 
-  def remove_reservation({target, name, warcode}) do
-    {:ok, req} = Clashcaller.Request.construct({target, name, warcode}, "DELETE")
+  def remove_reservation({target, name, warcode, position}) do
+    {:ok, req} = Clashcaller.Request.construct({target, name, warcode, position}, "DELETE")
     request_form = req
       |> Clashcaller.Request.to_form_body
     result = HTTPotion.post @api, [headers: @form_headers,

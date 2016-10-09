@@ -175,9 +175,9 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
     case matching_reservation do
       [] -> {:reply, {:error, :enoreservation}, state}
-      [reservation] ->
+      [%{position: position} = reservation] ->
         warcode = parse_war_code(url)
-        {:ok, "<success>"} = Clashcaller.remove_reservation({target, player, warcode})
+        {:ok, "<success>"} = Clashcaller.remove_reservation({target, player, warcode, position})
         new_reservations = reservations
           |> Enum.reject(fn %{player: player_name, target: target_nr} ->
             player_name === player && target_nr === target

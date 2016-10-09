@@ -68,12 +68,13 @@ defmodule Clashcaller.Request do
 
   ## Examples
 
-    iex> Clashcaller.Request.construct({1, "Nick", "1234"}, "DELETE")
-    { :ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick"]}
+    iex> Clashcaller.Request.construct({1, "Nick", "1234", 4}, "DELETE")
+    { :ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick", posx: "3"]}
   """
-  def construct({target, name, warcode}, "DELETE") do
+  def construct({target, name, warcode, position}, "DELETE") do
     posy = Integer.to_string(target - 1)
-    {:ok, [REQUEST: "DELETE_CALL", warcode: warcode, posy: posy, value: name]}
+    posx = Integer.to_string(position - 1)
+    {:ok, [REQUEST: "DELETE_CALL", warcode: warcode, posy: posy, value: name, posx: posx]}
   end
 
   @doc """
