@@ -16,4 +16,8 @@ defmodule Clashcaller do
   def register_attack(warcode, target, attack_position, stars) do
     @war_api.register_attack(warcode, target, attack_position, stars)
   end
+
+  def remove_reservation({target, name, warcode}) do
+    @war_api.remove_reservation({target, name, warcode})
+  end
 end

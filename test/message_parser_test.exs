@@ -127,7 +127,7 @@ defmodule MessageParserTest do
 
   test "!help should give an overview of commands" do
     commands = [
-      "!startwar", "!reservations", "!overview", "!reserve", "!attack"
+      "!startwar", "!reservations", "!overview", "!reserve", "!attack", "!war", "!unreserve"
     ]
     {:ok, result} = MessageParser.parse_response("!help")
 
@@ -135,4 +135,21 @@ defmodule MessageParserTest do
       {_, _} = :binary.match(result, command)
     end)
   end
+
+  test "when calling !unreserve <target> <name> it should remove the returned reservation" do
+    Storage.save_url "http://clashcaller.com/war/reservation_player_zoy"
+
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+    expected = "Successfully removed the reservation on #1 for player zoy."
+    assert MessageParser.parse_response("!unreserve 1 zoy") === {:ok, expected}
+  end
+
+  test "when calling !unreserve <target> <name> it should give an error if it can not find the reservation" do
+    Storage.save_url "http://clashcaller.com/war/empty"
+
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+    expected = "Player zoy has no reservation registered on #1."
+    assert MessageParser.parse_response("!unreserve 1 zoy") === {:ok, expected}
+  end
+
 end

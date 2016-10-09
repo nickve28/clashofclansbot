@@ -102,15 +102,29 @@ defmodule MessageParser do
     output = [
       "The following commands are available:",
       "!help - Shows the available command",
+      "!war - Shows the clashcaller url, in case neccessary",
       "!startwar <size> <clanname> <enemy clan> - Starts a new war",
       "!overview - Gives an overview of the best scores on each target registered",
       "!overview <playername> - Gives an overview of the attacks made by the player",
       "!reservations <target_nr> - Gives an overview of the reservations on a specified target",
       "!reserve <target_nr> <name> - Make a reservation on a target",
+      "!unreserve <target_nr> <name> - Removes a reservation on a target",
       "!attack <target_nr> <name> <stars> - Set your score on a target, only works if you have reserved."
     ]
       |> Enum.join("\n")
     {:ok, output}
+  end
+
+  defp parse_action("!unreserve", params) do
+    [target, name] = String.split(params, " ", parts: 2)
+    name = String.strip(name)
+    target = String.to_integer(target)
+
+    case ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(target, name) do
+      {:error, :enoreservation} -> {:ok, "Player #{name} has no reservation registered on ##{target}."}
+      {:ok, _} -> {:ok, "Successfully removed the reservation on ##{target} for player #{name}."}
+      _ -> {:ok, "Something went horribly wrong!"}
+    end
   end
 
   defp parse_action(command, _), do: { :no_content, command }
