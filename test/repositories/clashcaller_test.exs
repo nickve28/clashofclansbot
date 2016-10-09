@@ -76,7 +76,7 @@ defmodule Clashcaller.RequestTest do
   end
 
   test "construct delete_attack" do
-    expected = {:ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick"]}
-    assert Clashcaller.Request.construct({1, "Nick", "1234"}, "DELETE") === expected
+    expected = {:ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick", posx: "0"]}
+    assert Clashcaller.Request.construct({1, "Nick", "1234", 1}, "DELETE") === expected
   end
 end

@@ -76,11 +76,17 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:ok, "<success>"}
   end
 
+  def reserve_attack(5, "zoy", "reservation_5") do
+    {:ok, "<success>"}
+  end
+
   def register_attack("1234", 5, 1, 3) do
     {:ok, "<success>"}
   end
 
   def register_attack(_, _, _, _), do: {:ok, "<success>"}
 
-  def remove_reservation({target, name, warcode}), do: {:ok, "<success>"}
+  def remove_reservation({_nr, _name, _warcode, 1}), do: {:ok, "<success>"}
+  def remove_reservation({_nr, _name, _warcode, 2}), do: {:ok, "<success>"}
+
 end
