@@ -209,6 +209,27 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     {_, _, sync_time} = :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller)
     assert sync_time === time
   end
+
+  test "when calling remove_reservation it should give an error if the reservation can not be found" do
+    mock_url = "http://clashcaller.com/war/empty"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = {:error, :enoreservation}
+
+    assert ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(5, "Nick") === expected
+  end
+
+  test "when calling remove_reservation it should remove the reservation" do
+    mock_url = "http://clashcaller.com/war/reservation_5"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    reservation = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 5}
+    expected = {:ok, reservation}
+
+    assert ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(5, "Nick") === expected
+  end
 end
 
 

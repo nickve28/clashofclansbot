@@ -81,4 +81,6 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
   end
 
   def register_attack(_, _, _, _), do: {:ok, "<success>"}
+
+  def remove_reservation({target, name, warcode}), do: {:ok, "<success>"}
 end

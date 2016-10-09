@@ -165,6 +165,27 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     {:ok, reservations}
   end
 
+  def remove_reservation(target, player) do
+    GenServer.call(__MODULE__, :sync)
+    GenServer.call(__MODULE__, {:remove_reservation, target, player})
+  end
+
+  def handle_call({:remove_reservation, target, player}, _from, {url, reservations, last_synced} = state) do
+    matching_reservation = for %{player: ^player, target: ^target} = reservation <- reservations, do: reservation
+
+    case matching_reservation do
+      [] -> {:reply, {:error, :enoreservation}, state}
+      [reservation] ->
+        warcode = parse_war_code(url)
+        {:ok, "<success>"} = Clashcaller.remove_reservation({target, player, warcode})
+        new_reservations = reservations
+          |> Enum.reject(fn %{player: player_name, target: target_nr} ->
+            player_name === player && target_nr === target
+          end)
+        {:reply, {:ok, reservation}, {url, new_reservations, last_synced}}
+    end
+  end
+
   def attack(target, player, stars) do
     GenServer.call(__MODULE__, :sync)
     GenServer.call(__MODULE__, {:attack, target, player, stars})

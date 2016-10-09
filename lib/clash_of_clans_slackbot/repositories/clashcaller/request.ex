@@ -64,6 +64,19 @@ defmodule Clashcaller.Request do
   end
 
   @doc """
+  Construct a DELETE_CALL request"
+
+  ## Examples
+
+    iex> Clashcaller.Request.construct({1, "Nick", "1234"}, "DELETE")
+    { :ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick"]}
+  """
+  def construct({target, name, warcode}, "DELETE") do
+    posy = Integer.to_string(target - 1)
+    {:ok, [REQUEST: "DELETE_CALL", warcode: warcode, posy: posy, value: name]}
+  end
+
+  @doc """
   Converts the request parameter to a form body for form-encoded requests
 
   ## Examples

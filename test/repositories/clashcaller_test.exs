@@ -74,4 +74,9 @@ defmodule Clashcaller.RequestTest do
                 "searchable=false"], "&"
     assert Clashcaller.Request.to_form_body(params) === expected
   end
+
+  test "construct delete_attack" do
+    expected = {:ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick"]}
+    assert Clashcaller.Request.construct({1, "Nick", "1234"}, "DELETE") === expected
+  end
 end
