@@ -15,7 +15,7 @@ defmodule ClashOfClansSlackbot do
     case authenticate token do
       { :err, err_msg } -> IO.puts err_msg
       _ -> children = [
-          worker(SlackClient, [token]),
+          worker(Slack.Bot, [SlackClient, [], token, %{keepalive: 60_000}]),
           worker(ClashOfClansSlackbot.Services.ClashApi, [clantag, clashapi_token]),
           worker(ClashOfClansSlackbot.Services.ClashCaller, [])
         ]
