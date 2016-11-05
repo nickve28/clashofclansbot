@@ -3,6 +3,7 @@ defmodule MessageParser do
 
   def parse_response(message) do
     message
+      |> String.strip
       |> String.split(" ", parts: 2)
       |> parse_args
   end
