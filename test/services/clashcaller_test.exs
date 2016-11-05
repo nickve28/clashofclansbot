@@ -136,6 +136,21 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     assert result === {:ok, expected}
   end
 
+  test "when calling player_overview it should not replace the state" do
+    mock_url = "http://clashcaller.com/war/reservation_1"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    expected = [
+      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 1},
+    ]
+    result = ClashOfClansSlackbot.Services.ClashCaller.player_overview("Foo")
+    assert result === {:ok, []}
+
+    overview = ClashOfClansSlackbot.Services.ClashCaller.overview
+    assert overview === {:ok, expected}
+  end
+
   test "when calling reserve_attack it should return the reservation" do
     mock_url = "http://clashcaller.com/war/empty"
     Storage.save_url(mock_url)
@@ -245,6 +260,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     {:ok, reservations} = ClashOfClansSlackbot.Services.ClashCaller.reservations(5)
     assert reservations === expected
   end
+
 end
 
 
