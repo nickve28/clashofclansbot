@@ -24,27 +24,6 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     {:ok, state}
   end
 
-  def handle_call(:sync, _from, {url, reservations, last_synced} = state) do
-    current_time = @time_module.local_time
-      |> :calendar.datetime_to_gregorian_seconds
-
-    last_synced_time = last_synced
-      |> :calendar.datetime_to_gregorian_seconds
-
-    new_state = update_state(state, {current_time, last_synced_time})
-    {:reply, new_state, new_state}
-  end
-
-  defp update_state(state, {current_time, last_synced_time}) when (current_time - last_synced_time) < 300, do: state
-
-  defp update_state({url, _, _}, _) do
-    warcode = parse_war_code(url)
-
-    {:ok, new_reservations} = Clashcaller.overview(warcode)
-    time = @time_module.local_time
-    {url, new_reservations, time}
-  end
-
   def create_war(name, ename, size) do
     GenServer.call(__MODULE__, {:create_war, {name, ename, size}})
   end
@@ -63,6 +42,35 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   defp start_war({name, ename, size}) do
     Clashcaller.start_war(name, ename, size)
+  end
+
+  def handle_call(_msg, _from, {{:error, reason}, _, _} = state) do
+    {:reply, {:error, reason}, state}
+  end
+
+  def handle_call(:sync, _from, {url, reservations, last_synced} = state) do
+    current_time = @time_module.local_time
+      |> :calendar.datetime_to_gregorian_seconds
+
+    last_synced_time = last_synced
+      |> :calendar.datetime_to_gregorian_seconds
+
+    new_state = update_state(state, {current_time, last_synced_time})
+    {:reply, new_state, new_state}
+  end
+
+  defp update_state(state, {current_time, last_synced_time}) when (current_time - last_synced_time) < 300, do: state
+
+  defp update_state({{:error, :enowarurl}, _, _}, _) do
+    {{:error, :enowarurl}, [], {300, 0}}
+  end
+
+  defp update_state({url, _, _}, _) do
+    warcode = parse_war_code(url)
+
+    {:ok, new_reservations} = Clashcaller.overview(warcode)
+    time = @time_module.local_time
+    {url, new_reservations, time}
   end
 
   def get_current_war_url, do: GenServer.call(__MODULE__, :war)

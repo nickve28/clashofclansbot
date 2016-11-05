@@ -1,5 +1,6 @@
 defmodule MessageParser do
   @empty_values ["", ", ", " "]
+  @message_no_war "The system has no war registered. Please start a war using !startwar first."
 
   def parse_response(message) do
     message
@@ -18,6 +19,7 @@ defmodule MessageParser do
     case ClashOfClansSlackbot.Services.ClashCaller.player_overview(player_name) do
       {:ok, []} -> {:ok, "Player #{player_name} has no reservations."}
       {:ok, reservations} -> {:ok, format_player_entries(reservations, player_name)}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       _ -> {:ok, "Something went wrong!"}
     end
   end
@@ -26,7 +28,7 @@ defmodule MessageParser do
     case ClashOfClansSlackbot.Services.ClashCaller.overview do
       {:ok, []} -> {:ok, "No reservations have been made yet"}
       {:ok, entries} -> {:ok, format_entries(entries)}
-      {:err, _} -> {:ok, "Something went wrong!"}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       _ -> {:ok, "Message could not be processed"}
     end
   end
@@ -44,7 +46,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.create_war(name, ename, parsed_size) do
       { :ok, url } -> {:ok, "I started the war, it can be found here: #{url}"}
-      { :error, error_msg } -> {:error, "Oh no I could not start the war! #{error_msg}"}
+      { :error, error_msg } -> {:ok, "Oh no I could not start the war! #{error_msg}"}
     end
   end
 
@@ -55,6 +57,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.reservations(target) do
       {:ok, reservations} -> {:ok, to_output(reservations)}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       {:error, _reason} -> {:ok, "I couldn't get the reservations!"}
     end
   end
@@ -62,6 +65,7 @@ defmodule MessageParser do
   defp parse_action("!war", _parameters) do
     case ClashOfClansSlackbot.Services.ClashCaller.get_current_war_url() do
       {:ok, url} -> {:ok, "The current war url is #{url}"}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       {:error, _reason} -> {:ok, "Something went wrong while fetching the war url."}
     end
   end
@@ -73,6 +77,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.reserve(target, name) do
       {:ok, player} -> {:ok, reservation_text(player)}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       {:error, :ereservationexists} -> {:ok, "Player #{name} already has a reservation for ##{target}."}
       {:error, _reason} -> {:ok, "Oh no, something went wrong!"}
     end
@@ -94,6 +99,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.attack(target, player, stars) do
       {:ok, msg} -> {:ok, attack_text(msg)}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       {:error, :enoreservation} -> {:ok, "No reservation found for that player"}
       {:error, _} -> {:ok, "I wasn't able to process that request!"}
     end
@@ -123,6 +129,7 @@ defmodule MessageParser do
 
     case ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(target, name) do
       {:error, :enoreservation} -> {:ok, "Player #{name} has no reservation registered on ##{target}."}
+      {:error, :enowarurl} -> {:ok, @message_no_war}
       {:ok, _} -> {:ok, "Successfully removed the reservation on ##{target} for player #{name}."}
       _ -> {:ok, "Something went horribly wrong!"}
     end

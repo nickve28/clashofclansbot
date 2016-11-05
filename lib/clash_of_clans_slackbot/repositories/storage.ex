@@ -24,7 +24,7 @@ defmodule Storage do
   def get_war_url() do
     case File.read(@filename) do
       {:ok, binary_url} -> :erlang.binary_to_term(binary_url)
-      _ -> raise :enoent
+      _ -> {:error, :enowarurl}
     end
   end
 end
