@@ -123,11 +123,9 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   def handle_call({:player_overview, player_name}, _from, {url, current_reservations, last_synced}) do
-    warcode = parse_war_code(url)
-    {:ok, reservations} = Clashcaller.overview(warcode)
-    {:ok, filtered_reservations} = reservations
+    {:ok, filtered_reservations} = current_reservations
       |> to_overview(fn %{player: name} -> name === player_name end)
-    {:reply, {:ok, filtered_reservations}, {url, filtered_reservations, last_synced}}
+    {:reply, {:ok, filtered_reservations}, {url, current_reservations, last_synced}}
   end
 
   def overview do
