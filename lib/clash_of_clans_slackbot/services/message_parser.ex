@@ -1,4 +1,6 @@
 defmodule ClashOfClansSlackbot.Services.MessageParser do
+  alias ClashOfClansSlackbot.Repositories.ClashCaller.ClashCallerEntry
+
   @empty_values ["", ", ", " "]
   @message_no_war "The system has no war registered. Please start a war using !startwar first."
 
@@ -137,11 +139,11 @@ defmodule ClashOfClansSlackbot.Services.MessageParser do
 
   defp parse_action(command, _), do: { :no_content, command }
 
-  defp reservation_text(%Clashcaller.ClashcallerEntry{player: name, target: target}) do
+  defp reservation_text(%ClashCallerEntry{player: name, target: target}) do
     "Reservation for #{name} has been made on ##{target}"
   end
 
-  defp attack_text(%Clashcaller.ClashcallerEntry{player: name, target: target, stars: score}) do
+  defp attack_text(%ClashCallerEntry{player: name, target: target, stars: score}) do
     "#{name} attacked ##{target} with score: #{score}!"
   end
 

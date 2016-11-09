@@ -1,4 +1,6 @@
 defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
+  alias ClashOfClansSlackbot.Repositories.ClashCaller.ClashCallerEntry
+
   @behaviour ClashOfClansSlackbot.Behaviors.WarAPI
   @base_url "http://clashcaller.com/"
 
@@ -34,16 +36,16 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
 
   def overview("2345") do
     {:ok, [
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
     ]}
   end
 
   def overview("reservation_player_" <> name) do
-    {:ok, [%Clashcaller.ClashcallerEntry{player: name, position: 1, stars: "No attack", target: 1}]}
+    {:ok, [%ClashCallerEntry{player: name, position: 1, stars: "No attack", target: 1}]}
   end
 
   def overview("reservation_" <> target) do
-    {:ok, [%Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: String.to_integer(target)}]}
+    {:ok, [%ClashCallerEntry{player: "Nick", position: 1, stars: "No attack", target: String.to_integer(target)}]}
   end
 
   def overview("1234") do
@@ -57,7 +59,7 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
   defp to_players(response) do
     Poison.Parser.parse!(response.body)
       |> Map.get("calls")
-      |> Enum.map(&(Clashcaller.ClashcallerEntry.to_clashcaller_entry &1))
+      |> Enum.map(&(ClashCallerEntry.to_clashcaller_entry &1))
   end
 
   def reserve_attack(1, "Nick", "1234") do

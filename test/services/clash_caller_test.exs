@@ -1,5 +1,7 @@
 defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
   use ExUnit.Case
+  alias ClashOfClansSlackbot.Repositories.ClashCaller.ClashCallerEntry
+  alias ClashOfClansSlackbot.Repositories.Storage
 
   test "when starting the service it should sync at startup" do
     mock_url = "http://clashcaller.com/war/2345"
@@ -7,7 +9,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
      expected = [
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
     ]
 
     {_, reservations, _} = :sys.get_state(ClashOfClansSlackbot.Services.ClashCaller)
@@ -91,14 +93,14 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
     expected = [
-      %Clashcaller.ClashcallerEntry{player: "Zoy", position: 1, stars: "No attack", target: 1},
-      %Clashcaller.ClashcallerEntry{player: "Zoy", position: 1, stars: "No attack", target: 2},
-      %Clashcaller.ClashcallerEntry{player: "Juke", position: 2, stars: "2 stars", target: 3},
-      %Clashcaller.ClashcallerEntry{player: "Austin", position: 1, stars: "3 stars", target: 4},
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5},
-      %Clashcaller.ClashcallerEntry{player: "Drew", position: 1, stars: "3 stars", target: 6},
-      %Clashcaller.ClashcallerEntry{player: "Drew", position: 2, stars: "3 stars", target: 7},
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
+      %ClashCallerEntry{player: "Zoy", position: 1, stars: "No attack", target: 1},
+      %ClashCallerEntry{player: "Zoy", position: 1, stars: "No attack", target: 2},
+      %ClashCallerEntry{player: "Juke", position: 2, stars: "2 stars", target: 3},
+      %ClashCallerEntry{player: "Austin", position: 1, stars: "3 stars", target: 4},
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5},
+      %ClashCallerEntry{player: "Drew", position: 1, stars: "3 stars", target: 6},
+      %ClashCallerEntry{player: "Drew", position: 2, stars: "3 stars", target: 7},
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
     ]
 
    result = ClashOfClansSlackbot.Services.ClashCaller.overview
@@ -129,8 +131,8 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
     expected = [
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5},
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5},
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 8}
     ]
     result = ClashOfClansSlackbot.Services.ClashCaller.player_overview("Nick")
     assert result === {:ok, expected}
@@ -142,7 +144,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
     expected = [
-      %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 1},
+      %ClashCallerEntry{player: "Nick", position: 1, stars: "No attack", target: 1},
     ]
     result = ClashOfClansSlackbot.Services.ClashCaller.player_overview("Foo")
     assert result === {:ok, []}
@@ -156,7 +158,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 2}
+    expected = %ClashCallerEntry{player: "Nick", position: 1, stars: "No attack", target: 2}
 
     assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "Nick") === {:ok, expected}
   end
@@ -166,7 +168,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    expected = %Clashcaller.ClashcallerEntry{player: "zoy", position: 2, stars: "No attack", target: 2}
+    expected = %ClashCallerEntry{player: "zoy", position: 2, stars: "No attack", target: 2}
 
     assert ClashOfClansSlackbot.Services.ClashCaller.reserve(2, "zoy") === {:ok, expected}
   end
@@ -194,7 +196,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    expected = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
+    expected = %ClashCallerEntry{player: "Nick", position: 1, stars: "3 stars", target: 5}
     assert ClashOfClansSlackbot.Services.ClashCaller.attack(5, "Nick", 3) === {:ok, expected}
   end
 
@@ -240,7 +242,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     Storage.save_url(mock_url)
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
-    reservation = %Clashcaller.ClashcallerEntry{player: "Nick", position: 1, stars: "No attack", target: 5}
+    reservation = %ClashCallerEntry{player: "Nick", position: 1, stars: "No attack", target: 5}
     expected = {:ok, reservation}
 
     assert ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(5, "Nick") === expected
@@ -253,7 +255,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
 
     ClashOfClansSlackbot.Services.ClashCaller.reserve(5, "zoy")
     expected = [
-      %Clashcaller.ClashcallerEntry{player: "Nick", target: 5, position: 1, stars: "No attack"}
+      %ClashCallerEntry{player: "Nick", target: 5, position: 1, stars: "No attack"}
     ]
 
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.remove_reservation(5, "zoy")
