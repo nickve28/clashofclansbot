@@ -1,5 +1,7 @@
 defmodule ClashOfClansSlackbot do
   import Supervisor.Spec
+  alias ClashOfClansSlackbot.Services.{SlackClient, ClashApi, ClashCaller}
+  alias ClashOfClansSlackbot.Helpers.Validator
 
   def authenticate(token) do
     case Validator.validate_token token do
@@ -16,8 +18,8 @@ defmodule ClashOfClansSlackbot do
       { :err, err_msg } -> IO.puts err_msg
       _ -> children = [
           worker(Slack.Bot, [SlackClient, [], token, %{keepalive: 60_000}]),
-          worker(ClashOfClansSlackbot.Services.ClashApi, [clantag, clashapi_token]),
-          worker(ClashOfClansSlackbot.Services.ClashCaller, [])
+          worker(ClashApi, [clantag, clashapi_token]),
+          worker(ClashCaller, [])
         ]
         Supervisor.start_link(children, strategy: :one_for_one)
     end

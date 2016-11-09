@@ -1,6 +1,7 @@
-defmodule MessageParserTest do
+defmodule ClashOfClansSlackbot.MessageParserTest do
   use ExUnit.Case
-  doctest MessageParser
+  doctest ClashOfClansSlackbot.Services.MessageParser
+  alias ClashOfClansSlackbot.Services.MessageParser
 
   test "parse_response should respond with no content if the message does not start with a valid command" do
     result = MessageParser.parse_response "start 10 man war"

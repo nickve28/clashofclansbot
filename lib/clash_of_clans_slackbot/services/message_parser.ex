@@ -1,4 +1,4 @@
-defmodule MessageParser do
+defmodule ClashOfClansSlackbot.Services.MessageParser do
   @empty_values ["", ", ", " "]
   @message_no_war "The system has no war registered. Please start a war using !startwar first."
 
