@@ -2,6 +2,7 @@ defmodule ClashOfClansSlackbot.Services.SlackClient do
   use Slack
   require Logger
   alias ClashOfClansSlackbot.Services.ClashCaller
+  alias ClashOfClansSlackbot.Services.MessageParser
 
   def handle_connect(slack, state) do
     IO.puts "Connected as #{slack.me.name}"
