@@ -1,4 +1,4 @@
-defmodule Clashcaller do
+defmodule ClashOfClansSlackbot.Repositories.ClashCaller do
   @war_api Application.get_env(:clash_of_clans_slackbot, :war_api)
 
   def start_war(name, ename, size) do

@@ -1,4 +1,4 @@
-defmodule Storage do
+defmodule ClashOfClansSlackbot.Repositories.Storage do
   @dir "data"
   @filename Application.get_env(:clash_of_clans_slackbot, :war_url_filename) || "data/war_url.bk"
 

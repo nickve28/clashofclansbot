@@ -1,4 +1,8 @@
 defmodule ClashOfClansSlackbot.Services.ClashCaller do
+  alias ClashOfClansSlackbot.Repositories
+  alias ClashOfClansSlackbot.Repositories.Storage
+  alias ClashOfClansSlackbot.Repositories.ClashCaller.ClashCallerEntry
+
   use GenServer
 
   @time_module Application.get_env(:clash_of_clans_slackbot, :time_module)
@@ -41,7 +45,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   defp start_war({name, ename, size}) do
-    Clashcaller.start_war(name, ename, size)
+    Repositories.ClashCaller.start_war(name, ename, size)
   end
 
   def handle_call(_msg, _from, {{:error, reason}, _, _} = state) do
@@ -68,7 +72,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   defp update_state({url, _, _}, _) do
     warcode = parse_war_code(url)
 
-    {:ok, new_reservations} = Clashcaller.overview(warcode)
+    {:ok, new_reservations} = Repositories.ClashCaller.overview(warcode)
     time = @time_module.local_time
     {url, new_reservations, time}
   end
@@ -86,7 +90,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   def handle_call({:reservations, target}, _from, {url, _, _} = state) do
     warcode = parse_war_code(url)
-    {:ok, reservations} = Clashcaller.overview(warcode)
+    {:ok, reservations} = Repositories.ClashCaller.overview(warcode)
 
     result = reservations
       |> Enum.filter(&(&1.target === target))
@@ -114,13 +118,13 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   end
 
   defp confirm_reservation([], reservations, {target, name, warcode}) do
-    {:ok, "<success>"} = Clashcaller.reserve_attack(target, name, warcode)
+    {:ok, "<success>"} = Repositories.ClashCaller.reserve_attack(target, name, warcode)
 
     position = reservations
       |> Enum.filter(fn %{target: r_target} -> r_target === target end)
       |> Enum.count
 
-    %Clashcaller.ClashcallerEntry{player: name, target: target, stars: "No attack", position: position + 1}
+    %ClashCallerEntry{player: name, target: target, stars: "No attack", position: position + 1}
   end
 
   defp confirm_reservation(_, _, _), do: {:error, :ereservationexists}
@@ -183,7 +187,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
       [] -> {:reply, {:error, :enoreservation}, state}
       [%{position: position} = reservation] ->
         warcode = parse_war_code(url)
-        {:ok, "<success>"} = Clashcaller.remove_reservation({target, player, warcode, position})
+        {:ok, "<success>"} = Repositories.ClashCaller.remove_reservation({target, player, warcode, position})
         new_reservations = reservations
           |> Enum.reject(fn %{player: player_name, target: target_nr} ->
             player_name === player && target_nr === target
@@ -208,7 +212,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     case updated_attack do
       {:ok, "<success>"} ->
         updated_stars = Enum.at(Map.keys(@mapping_stars), stars)
-        attacker = %Clashcaller.ClashcallerEntry{attacker | stars: updated_stars}
+        attacker = %ClashCallerEntry{attacker | stars: updated_stars}
         updated_reservations = update_reservations(reservations, attacker)
         {:reply, {:ok, attacker}, {url, updated_reservations, last_synced}}
       error -> {:reply, error, state}
@@ -219,9 +223,9 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
     for reservation <- reservations, do: update_entry(reservation, attack)
   end
 
-  defp update_entry(%Clashcaller.ClashcallerEntry{target: _target, player: _player} = player,
-   %Clashcaller.ClashcallerEntry{target: _target, player: _player, stars: stars}) do
-    %Clashcaller.ClashcallerEntry{player | stars: stars}
+  defp update_entry(%ClashCallerEntry{target: _target, player: _player} = player,
+   %ClashCallerEntry{target: _target, player: _player, stars: stars}) do
+    %ClashCallerEntry{player | stars: stars}
   end
 
   defp update_entry(old_reservation, _), do: old_reservation
@@ -235,7 +239,7 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
   defp handle_attack_registration(nil, _, _, _), do: {:error, :enoreservation}
 
   defp handle_attack_registration(%{position: attack_position}, warcode, target, stars) do
-    Clashcaller.register_attack(warcode, target, attack_position, stars)
+    Repositories.ClashCaller.register_attack(warcode, target, attack_position, stars)
   end
 
   defp find_attack_position(reservations, player) do

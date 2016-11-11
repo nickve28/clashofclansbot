@@ -1,11 +1,11 @@
-defmodule Clashcaller.Request do
+defmodule ClashOfClansSlackbot.Repositories.ClashCaller.Request do
   @war_sizes [10, 15, 20, 25, 30, 40, 50]
 
   @doc """
   Constructs a UPDATE_STARS request
 
   ## Examples
-      iex> Clashcaller.Request.construct("1234", 1, 1, 2)
+      iex> Request.construct("1234", 1, 1, 2)
       { :ok, [REQUEST: "UPDATE_STARS", warcode: "1234", posy: "0", posx: "0", value: "4"] }
   """
   def construct(warcode, target, position, stars) do
@@ -21,7 +21,7 @@ defmodule Clashcaller.Request do
   Constructs a CREATE_WAR request for clashcaller, returned as list
 
   ## Examples
-      iex> Clashcaller.Request.construct("Atomic Bullies", "Dizzies", 10)
+      iex> Request.construct("Atomic Bullies", "Dizzies", 10)
       { :ok , [REQUEST: "CREATE_WAR", cname: "Atomic Bullies", ename: "Dizzies", size: "10", timers: "0", searchable: "false"] }
   """
   def construct(clan_name, enemy_clan_name, size) when size in @war_sizes do
@@ -33,7 +33,7 @@ defmodule Clashcaller.Request do
   Triggered when an invalid size is given
 
   ## Examples
-      iex> Clashcaller.Request.construct("Atomic Bullies", "Dizzies", 45)
+      iex> Request.construct("Atomic Bullies", "Dizzies", 45)
       { :err, "45 is not valid, expected one of: 10, 15, 20, 25, 30, 40, 50" }
   """
   def construct(clan_name, enemy_clan, size) when is_integer(size) do
@@ -44,7 +44,7 @@ defmodule Clashcaller.Request do
   Constructs a request to reserve a target
 
   ## Examples
-      iex> Clashcaller.Request.construct(1, "Nick", "1234")
+      iex> Request.construct(1, "Nick", "1234")
       { :ok, [REQUEST: "APPEND_CALL", warcode: "1234", posy: "0", value: "Nick"] }
   """
   def construct(target, name, war) when is_integer(target) do
@@ -56,7 +56,7 @@ defmodule Clashcaller.Request do
   Construct a request to get the current war overview
 
   ## Examples
-      iex> Clashcaller.Request.construct("1234")
+      iex> Request.construct("1234")
       { :ok, [REQUEST: "GET_FULL_UPDATE", warcode: "1234"] }
   """
   def construct(warcode) do
@@ -68,7 +68,7 @@ defmodule Clashcaller.Request do
 
   ## Examples
 
-    iex> Clashcaller.Request.construct({1, "Nick", "1234", 4}, "DELETE")
+    iex> Request.construct({1, "Nick", "1234", 4}, "DELETE")
     { :ok, [REQUEST: "DELETE_CALL", warcode: "1234", posy: "0", value: "Nick", posx: "3"]}
   """
   def construct({target, name, warcode, position}, "DELETE") do
@@ -81,7 +81,7 @@ defmodule Clashcaller.Request do
   Converts the request parameter to a form body for form-encoded requests
 
   ## Examples
-      iex> Clashcaller.Request.to_form_body [REQUEST: "GET_FULL_UPDATE", warcode: "1234"]
+      iex> Request.to_form_body [REQUEST: "GET_FULL_UPDATE", warcode: "1234"]
       "REQUEST=GET_FULL_UPDATE&warcode=1234"
   """
   def to_form_body(request) do

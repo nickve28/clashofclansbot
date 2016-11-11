@@ -1,4 +1,4 @@
-defmodule Clashcaller.ClashcallerEntry do
+defmodule ClashOfClansSlackbot.Repositories.ClashCaller.ClashCallerEntry do
   @derive [Poison.Encoder]
   defstruct player: nil, stars: nil, target: nil, position: nil
 
@@ -24,7 +24,7 @@ defmodule Clashcaller.ClashcallerEntry do
     { position, _ } = Integer.parse clashcaller_output_json["posx"]
     position = position + 1
 
-    %Clashcaller.ClashcallerEntry{
+    %ClashOfClansSlackbot.Repositories.ClashCaller.ClashCallerEntry{
       player: clashcaller_output_json["playername"],
       stars: mapped_stars,
       target: target,
