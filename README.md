@@ -62,6 +62,15 @@ The bot supports the following commands:
   - Reserves the target on clashcaller
   - Case insensitive
   - Example: !reserve 1 Nick
+- !overview
+  - Shows the overview of the war, showing the best attack registered per target
+  - Example: !overview
+- !overview NAME
+  - Shows the overview of attacks made by this player
+  - Example: !overview nick
+- !unreserve TARGET NAME
+  - Removes a reservation on a target
+  - Example: !unreserve 3 nick
 - !attack TARGET PLAYERNAME STARS
   - Sets the stars of the attack
   - Only works if the attack is reserved beforehand
@@ -72,7 +81,6 @@ The bot supports the following commands:
   Anything regarding donations will be done itself.
 
 ## Known issues / gotcha's
-- Clashbot can turn off during bad internet connection, and not reconnect. This issue is being investigated.
 - Player-links are not yet configurable in an easy way
 - Playernames should not use emojis in clashcaller
 
