@@ -12,7 +12,7 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
  status_code: 200}
   #todo parse
 
-  def start_war(10, "error", ename) do
+  def start_war(10, "error", _) do
     {:err, %{code: 400}}
   end
 
@@ -20,7 +20,7 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:ok, @base_url <> "war/newwar"}
   end
 
-  def start_war(name, ename, size) do
+  def start_war(_, _, _) do
     {:ok, @base_url <> "war/3tynq"}
   end
 

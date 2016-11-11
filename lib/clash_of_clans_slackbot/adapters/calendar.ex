@@ -22,13 +22,13 @@ defmodule ClashOfClansSlackbot.Adapters.Calendar do
     GenServer.call(__MODULE__, :get_time)
   end
 
-  def handle_call(:get_time, _from, state) do
-    {:reply, state, state}
-  end
-
   #since we want the time to be updated in our tests, a call is used
   def set_time({{_year, _month, _day}, {_hours, _minutes, _seconds}} = date) do
     GenServer.call(__MODULE__, {:set_time, date})
+  end
+
+  def handle_call(:get_time, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_call({:set_time, date}, _from, _state) do

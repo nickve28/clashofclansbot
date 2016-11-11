@@ -1,7 +1,6 @@
 defmodule ClashOfClansSlackbot.Services.SlackClient do
   use Slack
   require Logger
-  alias ClashOfClansSlackbot.Services.ClashCaller
   alias ClashOfClansSlackbot.Services.MessageParser
 
   def handle_connect(slack, state) do
@@ -9,7 +8,7 @@ defmodule ClashOfClansSlackbot.Services.SlackClient do
     {:ok, state}
   end
 
-  def handle_event(message = %{hidden: true}, slack, state) do #This is to prevent the hidden url messages from crashing everything
+  def handle_event(_message = %{hidden: true}, _slack, state) do #This is to prevent the hidden url messages from crashing everything
     { :ok, state }
   end
 
@@ -34,7 +33,7 @@ defmodule ClashOfClansSlackbot.Services.SlackClient do
     exit {:error, :keepalive_timeout}
   end
 
-  def handle_close(reason, slack, state) do
+  def handle_close(reason, _slack, state) do
     Poison.encode!(reason)
       |> Logger.error
     {:ok, state}

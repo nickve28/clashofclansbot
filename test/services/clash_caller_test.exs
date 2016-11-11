@@ -30,7 +30,7 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
       |> :calendar.gregorian_seconds_to_datetime
       |> ClashOfClansSlackbot.Adapters.Calendar.set_time
 
-    result = ClashOfClansSlackbot.Services.ClashCaller.overview
+    ClashOfClansSlackbot.Services.ClashCaller.overview
 
 
     expected = {mock_url, [], updated_time}

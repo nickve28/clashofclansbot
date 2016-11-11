@@ -36,7 +36,7 @@ defmodule ClashOfClansSlackbot.Repositories.ClashCaller.Request do
       iex> Request.construct("Atomic Bullies", "Dizzies", 45)
       { :err, "45 is not valid, expected one of: 10, 15, 20, 25, 30, 40, 50" }
   """
-  def construct(clan_name, enemy_clan, size) when is_integer(size) do
+  def construct(_, _, size) when is_integer(size) do
     { :err, "#{size} is not valid, expected one of: #{Enum.join @war_sizes, ", "}" }
   end
 

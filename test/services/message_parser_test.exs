@@ -14,7 +14,6 @@ defmodule ClashOfClansSlackbot.MessageParserTest do
     {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
 
     result = MessageParser.parse_response "!startwar 10 \"Atomic Bullies \" \"The Trumps\""
-    expected = "newwar"
 
     assert result === { :ok, "I started the war, it can be found here: http://clashcaller.com/war/newwar"}
   end
