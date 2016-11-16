@@ -24,6 +24,10 @@ defmodule ClashOfClansSlackbot.Adapters.MockClashCallerAPI do
     {:ok, @base_url <> "war/3tynq"}
   end
 
+  def overview("error_invalid") do
+    "<error>Invalid War ID.</error>"
+  end
+
   def overview("empty") do
     {:ok, []}
   end
