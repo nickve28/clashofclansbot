@@ -82,10 +82,12 @@ defmodule ClashOfClansSlackbot.Services.ClashCaller do
 
   defp update_state({url, _, _}, _) do
     warcode = parse_war_code(url)
-
-    {:ok, new_reservations} = Repositories.ClashCaller.overview(warcode)
     time = @time_module.local_time
-    {url, new_reservations, time}
+
+    case Repositories.ClashCaller.overview(warcode) do
+      {:ok, new_reservations} -> {url, new_reservations, time}
+      {:error, _} -> {{:error, :enowarurl}, [], time}
+    end
   end
 
   defp confirm_reservation([], reservations, {target, name, warcode}) do

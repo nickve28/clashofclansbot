@@ -33,6 +33,8 @@ defmodule ClashOfClansSlackbot.Adapters.ClashCallerAPI do
     end
   end
 
+  defp convert_to_overview("<error>Invalid War ID.</error>" = error), do: error
+
   defp convert_to_overview(body) do
     Poison.Parser.parse!(body)
       |> Map.get("calls")

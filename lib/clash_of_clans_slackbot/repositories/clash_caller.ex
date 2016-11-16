@@ -10,7 +10,11 @@ defmodule ClashOfClansSlackbot.Repositories.ClashCaller do
   end
 
   def overview(warcode) do
-    @war_api.overview(warcode)
+
+    case @war_api.overview(warcode) do
+      {:ok, reservations} = result -> result
+      _ -> {:error, :enowarurl}
+    end
   end
 
   def register_attack(warcode, target, attack_position, stars) do

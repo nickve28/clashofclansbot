@@ -263,6 +263,14 @@ defmodule ClashOfClansSlackbot.Services.ClashcallerTest do
     assert reservations === expected
   end
 
+  test "when starting the service but the url is expired, it should resort to the no url state" do
+    #<error>Invalid War ID.</error>
+    mock_url = "http://clashcaller.com/war/error_invalid"
+    Storage.save_url(mock_url)
+    {:ok, _} = ClashOfClansSlackbot.Services.ClashCaller.start_link
+
+    assert {:error, :enowarurl} = ClashOfClansSlackbot.Services.ClashCaller.overview
+  end
 end
 
 
