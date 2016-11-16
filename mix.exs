@@ -32,7 +32,7 @@ defmodule ClashOfClansSlackbot.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:slack, "~> 0.8.0"},
-     {:httpotion, "~> 2.2.0"},
+     {:httpotion, "~> 3.0.2"},
      {:mock, "~> 0.1.3", only: :test},
      {:poison, "~> 2.0"},
      {:exrm, "~> 1.0.3"},
