@@ -12,8 +12,8 @@ defmodule ClashOfClansSlackbot.Services.SlackClient do
     { :ok, state }
   end
 
-  def handle_event(message = %{type: "message"}, slack, state) do
-    text = message.text
+  def handle_event(message = %{type: "message", text: text_message}, slack, state) do
+    text = text_message
       |> String.downcase
 
     Logger.info("Received #{text}")
